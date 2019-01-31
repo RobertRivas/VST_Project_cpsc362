@@ -201,7 +201,12 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
   <LIVE_SETTINGS>
+<<<<<<< HEAD
     <OSX buildEnabled="1"/>
+=======
+    <OSX/>
+    <LINUX/>
+>>>>>>> f36374458cbbc9c29853497fbfe0882d56a306eb
   </LIVE_SETTINGS>
-  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_WEB_BROWSER="0"/>
 </JUCERPROJECT>
