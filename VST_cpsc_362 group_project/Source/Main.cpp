@@ -23,21 +23,17 @@ public:
     bool moreThanOneInstanceAllowed() override       { return true; }
 
     //==============================================================================
-    
-  
-    
     void initialise (const String& commandLine) override
     {
-        
         // This method is where you should put your application's initialisation code..
-        
+
         mainWindow.reset (new MainWindow (getApplicationName()));
     }
 
     void shutdown() override
     {
         // Add your application's shutdown code here..
-    
+
         mainWindow = nullptr; // (deletes our window)
     }
 
@@ -99,11 +95,12 @@ public:
 
     private:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
-    
     };
-    private:
-        std::unique_ptr<MainWindow> mainWindow;
+
+private:
+    std::unique_ptr<MainWindow> mainWindow;
 };
+
 //==============================================================================
 // This macro generates the main() routine that launches the app.
 START_JUCE_APPLICATION (VST_cpsc_362group_projectApplication)
