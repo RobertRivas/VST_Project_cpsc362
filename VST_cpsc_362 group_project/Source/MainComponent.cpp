@@ -63,10 +63,13 @@ void MainComponent::paint (Graphics& g)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
 
     // You can add your drawing code here!
+    
+    // block comment centered font might need later
+    /*
     g.setFont(Font(16.0F));
     g.setColour(Colours::white);
     g.drawText("Hello World !", getLocalBounds(), Justification::centred, true );
-    
+    */
     
 }
 
