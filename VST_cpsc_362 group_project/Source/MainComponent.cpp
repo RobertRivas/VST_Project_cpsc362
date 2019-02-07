@@ -42,12 +42,11 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     // Your audio-processing code goes here!
 
     // For more details, see the help for AudioProcessor::getNextAudioBlock()
-
-   float* leftSpeaker = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
+    float* leftSpeaker = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
     float* rightSpeaker = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
     
     for (int sample = 0; sample < bufferToFill.buffer->getNumSamples(); ++sample){
-        float theWave = osc.saw(440);
+        float theWave = osc.phasor(440);
         leftSpeaker[sample] = theWave * 0.25;
         rightSpeaker[sample] = leftSpeaker[sample];
         
