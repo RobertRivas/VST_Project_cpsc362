@@ -43,9 +43,15 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
 
     // For more details, see the help for AudioProcessor::getNextAudioBlock()
 
-    // Right now we are not producing any data, in which case we need to clear the buffer
-    // (to prevent the output of random noise)
-    bufferToFill.clearActiveBufferRegion();
+   float* leftSpeaker = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
+    float* rightSpeaker = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
+    
+    for (int sample = 0; sample < bufferToFill.buffer->getNumSamples(); ++sample){
+        float theWave = osc.saw(440);
+        leftSpeaker[sample] = theWave * 0.25;
+        rightSpeaker[sample] = leftSpeaker[sample];
+        
+    }
 }
 
 void MainComponent::releaseResources()
