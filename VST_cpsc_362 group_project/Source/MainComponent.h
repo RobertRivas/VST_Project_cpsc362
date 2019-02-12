@@ -9,7 +9,9 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "maximilian.h"
+#include "waveForms.h"
+
+
 
 //==============================================================================
 /*
@@ -33,10 +35,14 @@ public:
     void resized() override;
 
 private:
+    waveForms wave; ///call to wave form class in waveforms.h
+    
     //==============================================================================
     // Your private member variables go here...
-    maxiOsc osc;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
+
+
+

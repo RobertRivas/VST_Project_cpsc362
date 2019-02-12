@@ -1,5 +1,5 @@
 /*
-  ==============================================================================
+
 
     This file was auto-generated!
 
@@ -8,7 +8,10 @@
 
 #include "MainComponent.h"
 
+
 //==============================================================================
+
+
 MainComponent::MainComponent()
 {
     // Make sure you set the size of the component after
@@ -16,7 +19,7 @@ MainComponent::MainComponent()
     setSize (800, 600);
 
     // specify the number of input and output channels that we want to open
-    setAudioChannels (2, 2);
+    setAudioChannels (0, 2);
 }
 
 MainComponent::~MainComponent()
@@ -39,18 +42,23 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-    // Your audio-processing code goes here!
-
-    // For more details, see the help for AudioProcessor::getNextAudioBlock()
-    float* leftSpeaker = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
+    
+    float* leftSpeaker = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);//start of buffer fill
     float* rightSpeaker = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
     
     for (int sample = 0; sample < bufferToFill.buffer->getNumSamples(); ++sample){
-        float theWave = osc.phasor(440);
-        leftSpeaker[sample] = theWave * 0.25;
+        double theWave = wave.SawWave(sample, 440, 0.25); ////input to saw wave function might be a good start to apply MIDI
+        leftSpeaker[sample] = theWave;
         rightSpeaker[sample] = leftSpeaker[sample];
         
     }
+    // Your audio-processing code goes here!
+
+    // For more details, see the help for AudioProcessor::getNextAudioBlock()
+
+    // Right now we are not producing any data, in which case we need to clear the buffer
+    // (to prevent the output of random noise)
+    //bufferToFill.clearActiveBufferRegion();
 }
 
 void MainComponent::releaseResources()
@@ -69,13 +77,6 @@ void MainComponent::paint (Graphics& g)
 
     // You can add your drawing code here!
     
-    // block comment centered font might need later
-    /*
-    g.setFont(Font(16.0F));
-    g.setColour(Colours::white);
-    g.drawText("Hello World !", getLocalBounds(), Justification::centred, true );
-    */
-    
 }
 
 void MainComponent::resized()
@@ -84,3 +85,5 @@ void MainComponent::resized()
     // If you add any child components, this is where you should
     // update their positions.
 }
+
+

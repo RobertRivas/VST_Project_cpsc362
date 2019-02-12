@@ -12,11 +12,11 @@
 #include "MainComponent.h"
 
 //==============================================================================
-class VST_cpsc_362group_projectApplication  : public JUCEApplication
+class scratchforsoftdevApplication  : public JUCEApplication
 {
 public:
     //==============================================================================
-    VST_cpsc_362group_projectApplication() {}
+    scratchforsoftdevApplication() {}
 
     const String getApplicationName() override       { return ProjectInfo::projectName; }
     const String getApplicationVersion() override    { return ProjectInfo::versionString; }
@@ -103,4 +103,4 @@ private:
 
 //==============================================================================
 // This macro generates the main() routine that launches the app.
-START_JUCE_APPLICATION (VST_cpsc_362group_projectApplication)
+START_JUCE_APPLICATION (scratchforsoftdevApplication)
