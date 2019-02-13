@@ -57,7 +57,7 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
 
     // Right now we are not producing any data, in which case we need to clear the buffer
     // (to prevent the output of random noise)
-    //bufferToFill.clearActiveBufferRegion();
+    //bufferToFill.clearActiveBufferRegion(); ///had to comment this out it was killing output
 }
 
 void MainComponent::releaseResources()
