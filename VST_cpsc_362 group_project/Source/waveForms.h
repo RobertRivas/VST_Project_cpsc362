@@ -30,14 +30,10 @@ public:
         double sawIncr = (2 * freq) / 44100;
 	    double sawValue = -1;
 	    
-	    for (int n = 0; n < time; n++)
-	    {
-		    result = sawValue;
-		    if ((sawValue += sawIncr) >= 1)
-			    sawValue -= 2;
-	    }
-    
-        return result * amp;
+        if ((sawValue += (sawIncr * time)) >= 1)
+          sawValue = (std::fmod(sawValue + 1, 2.0)) - 1;
+        
+        return sawValue * amp;
     }
     
 };

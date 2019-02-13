@@ -48,8 +48,7 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     
     for (int sample = 0; sample < bufferToFill.buffer->getNumSamples(); ++sample){
         double theWave = wave.SawWave(sample, 440, 0.25); ////input to saw wave function might be a good start to apply MIDI
-        leftSpeaker[sample] = theWave;
-        rightSpeaker[sample] = leftSpeaker[sample];
+        leftSpeaker[sample] = rightSpeaker[sample] = theWave;
         
     }
     // Your audio-processing code goes here!
