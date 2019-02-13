@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="yyn2gk" name="VST_cpsc_362 group_project" projectType="guiapp"
-              jucerVersion="5.4.1">
+              jucerVersion="5.4.2">
   <MAINGROUP id="o15xPc" name="VST_cpsc_362 group_project">
     <GROUP id="{E398EB47-5C4B-18BA-C44B-324F0171F946}" name="Source">
       <FILE id="HuvI31" name="waveForms.h" compile="1" resource="0" file="Source/waveForms.h"/>
@@ -32,6 +32,8 @@
         <MODULEPATH id="juce_gui_extra" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../Desktop/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017">
@@ -54,6 +56,8 @@
         <MODULEPATH id="juce_gui_extra" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../Desktop/JUCE/modules"/>
       </MODULEPATHS>
     </VS2017>
     <VS2015 targetFolder="Builds/VisualStudio2015">
@@ -76,6 +80,8 @@
         <MODULEPATH id="juce_gui_extra" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../Desktop/JUCE/modules"/>
       </MODULEPATHS>
     </VS2015>
     <VS2013 targetFolder="Builds/VisualStudio2013">
@@ -98,6 +104,8 @@
         <MODULEPATH id="juce_gui_extra" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../Desktop/JUCE/modules"/>
       </MODULEPATHS>
     </VS2013>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
@@ -120,6 +128,8 @@
         <MODULEPATH id="juce_gui_extra" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../Desktop/JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <CODEBLOCKS_WINDOWS targetFolder="Builds/CodeBlocksWindows">
@@ -142,6 +152,8 @@
         <MODULEPATH id="juce_gui_extra" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../Desktop/JUCE/modules"/>
       </MODULEPATHS>
     </CODEBLOCKS_WINDOWS>
     <CODEBLOCKS_LINUX targetFolder="Builds/CodeBlocksLinux">
@@ -164,6 +176,8 @@
         <MODULEPATH id="juce_gui_extra" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../Desktop/JUCE/modules"/>
       </MODULEPATHS>
     </CODEBLOCKS_LINUX>
     <CLION targetFolder="Builds/CLion">
@@ -182,6 +196,8 @@
         <MODULEPATH id="juce_gui_extra" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../Desktop/JUCE/modules"/>
         <MODULEPATH id="juce_video" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../Desktop/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../Desktop/JUCE/modules"/>
       </MODULEPATHS>
     </CLION>
   </EXPORTFORMATS>
@@ -194,11 +210,13 @@
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
   <LIVE_SETTINGS>

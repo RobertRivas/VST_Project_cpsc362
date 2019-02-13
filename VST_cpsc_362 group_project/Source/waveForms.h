@@ -26,12 +26,12 @@ public:
 
     
     double SawWave(int time, double freq, double amp) { /////saw wave function
-        double result = 0;
+        
         double sawIncr = (2 * freq) / 44100;
 	    double sawValue = -1;
 	    
         if ((sawValue += (sawIncr * time)) >= 1)
-          sawValue = (std::fmod(sawValue + 1, 2.0)) - 1;
+          sawValue = (fmod(sawValue + 1, 2.0)) - 1;
         
         return sawValue * amp;
     }
