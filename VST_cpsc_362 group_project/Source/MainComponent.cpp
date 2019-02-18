@@ -17,7 +17,8 @@ MainComponent::MainComponent()
     // Make sure you set the size of the component after
     // you add any child components.
     setSize (800, 600);
-
+	
+	
     // specify the number of input and output channels that we want to open
     setAudioChannels (0, 2);
 }
@@ -33,7 +34,8 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 {
     // This function will be called when the audio device is started, or when
     // its settings (i.e. sample rate, block size, etc) are changed.
-
+	IIRCoefficients temp = IIRCoefficients::makeLowPass(sampleRate, 10000, 5);
+	lp1.setCoefficients(temp);
     // You can use this function to initialise any resources you might need,
     // but be careful - it will be called on the audio thread, not the GUI thread.
 
@@ -42,19 +44,22 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-    
+	
     float* leftSpeaker = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);//start of buffer fill
     float* rightSpeaker = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
     
     for (int sample = 0; sample < bufferToFill.buffer->getNumSamples(); ++sample){
         double theWave = wave.SawWave(sample, 440, 0.25); ////input to saw wave function might be a good start to apply MIDI
+		
         leftSpeaker[sample] = rightSpeaker[sample] = theWave;
+		
         
     }
     // Your audio-processing code goes here!
 
     // For more details, see the help for AudioProcessor::getNextAudioBlock()
-
+	lp1.processSamples(leftSpeaker, bufferToFill.buffer->getNumSamples());
+	lp1.processSamples(rightSpeaker, bufferToFill.buffer->getNumSamples());
     // Right now we are not producing any data, in which case we need to clear the buffer
     // (to prevent the output of random noise)
     //bufferToFill.clearActiveBufferRegion(); ///had to comment this out it was killing output
