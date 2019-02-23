@@ -36,7 +36,7 @@ public:
 			double frequency = slider->getValue();
 			//Add behavior for when we make changed to the sliders
 			//since this is a frequency slider maybe update the frequency like
-			wave.setfreq(frequency);
+			wave.setFreq(frequency);
 		}
 		else if (slider == &dial1) {
 			//add behavior here
