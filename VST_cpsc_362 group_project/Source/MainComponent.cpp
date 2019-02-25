@@ -70,7 +70,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 {
     // This function will be called when the audio device is started, or when
     // its settings (i.e. sample rate, block size, etc) are changed.
-	IIRCoefficients temp = IIRCoefficients::makeLowPass(sampleRate, 10000, 5);
+	IIRCoefficients temp = IIRCoefficients::makeLowPass(sampleRate, 10000, 5); 
 	lp1.setCoefficients(temp);
     // You can use this function to initialise any resources you might need,
     // but be careful - it will be called on the audio thread, not the GUI thread.
