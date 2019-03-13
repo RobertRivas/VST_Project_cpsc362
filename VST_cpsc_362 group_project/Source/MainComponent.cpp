@@ -9,8 +9,53 @@
 //==============================================================================
 
 
-MainComponent::MainComponent()
+MainComponent::MainComponent() : keyboardComponent (keyboardState, MidiKeyboardComponent::horizontalKeyboard),
+startTime (Time::getMillisecondCounterHiRes() * 0.001)
 {
+    setOpaque (true);
+    
+    addAndMakeVisible (midiInputListLabel);
+    midiInputListLabel.setText ("MIDI Input:", dontSendNotification);
+    midiInputListLabel.attachToComponent (&midiInputList, true);
+    
+    
+    addAndMakeVisible (midiInputList);
+    midiInputList.setTextWhenNoChoicesAvailable ("No MIDI Inputs Enabled");
+    auto midiInputs = MidiInput::getDevices();
+    midiInputList.addItemList (midiInputs, 1);
+    
+     // find the first enabled device and use that by default
+     for (auto midiInput : midiInputs)
+     {
+     if (deviceManager.isMidiInputEnabled (midiInput))
+     {
+     setMidiInput (midiInputs.indexOf (midiInput));
+     break;
+     }
+     }
+     
+     // if no enabled devices were found just use the first one in the list
+     if (midiInputList.getSelectedId() == 0)
+     setMidiInput (0);
+    addAndMakeVisible (keyboardComponent);
+    keyboardState.addListener (this);
+    
+    addAndMakeVisible (midiMessagesBox);
+    midiMessagesBox.setMultiLine (true);
+    midiMessagesBox.setReturnKeyStartsNewLine (true);
+    midiMessagesBox.setReadOnly (true);
+    midiMessagesBox.setScrollbarsShown (true);
+    midiMessagesBox.setCaretVisible (false);
+    midiMessagesBox.setPopupMenuEnabled (true);
+    midiMessagesBox.setColour (TextEditor::backgroundColourId, Colour (0x32ffffff));
+    midiMessagesBox.setColour (TextEditor::outlineColourId, Colour (0x1c000000));
+    midiMessagesBox.setColour (TextEditor::shadowColourId, Colour (0x16000000));
+    
+    
+    
+    
+    /*
+    
 	dial1.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag); //configure sliders' properties
 	dial1.setTextBoxStyle(Slider::TextBoxBelow, false, 120, dial1.getTextBoxHeight());
 	dial1.setRange(0, 1);
@@ -42,7 +87,7 @@ MainComponent::MainComponent()
 	addAndMakeVisible(frequencyLabel);
 	addAndMakeVisible(frequencySlider);
 
-	
+	*/
 	
 	// Make sure you set the size of the component after
     // you add any child components.
@@ -56,6 +101,8 @@ MainComponent::MainComponent()
 MainComponent::~MainComponent()
 {
     // This shuts down the audio device and clears the audio source.
+    keyboardState.removeListener (this);
+    deviceManager.removeMidiInputCallback (MidiInput::getDevices()[midiInputList.getSelectedItemIndex()], this);
     shutdownAudio();
 }
 
@@ -67,6 +114,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     // This function will be called when the audio device is started, or when
     // its settings (i.e. sample rate, block size, etc) are changed.
 	
+   
 	lp1.prepare(spec);
 	rv6.prepare(spec);
 
@@ -89,8 +137,10 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
         
     }
     // Your audio-processing code goes here!
-	dsp::AudioBlock<float> ab1 = dsp::AudioBlock<float>::AudioBlock(channels, 2, bufferToFill.buffer->getNumSamples());
-	dsp::ProcessContextReplacing<float> pc = dsp::ProcessContextReplacing<float>::ProcessContextReplacing(ab1);
+    
+    
+	dsp::AudioBlock<float> ab1 = dsp::AudioBlock<float>(channels, 2, bufferToFill.buffer->getNumSamples());
+	dsp::ProcessContextReplacing<float> pc = dsp::ProcessContextReplacing<float>(ab1);
     // For more details, see the help for AudioProcessor::getNextAudioBlock()
 	lp1.process(pc);
 	rv6.process(pc);
@@ -123,10 +173,16 @@ void MainComponent::resized()
 	//=========================Slider Sizing and positioning============================
 	Rectangle<int> area = getLocalBounds();	//This rectangles are used to map sliders on screen
 	Rectangle<int> dialArea = area.removeFromBottom(area.getHeight() / 2); //dialArea targets the bottom of screen
-
-	frequencySlider.setBounds(100, 40, getWidth() - 130, 20);
-	dial1.setBounds(dialArea.removeFromLeft(area.getWidth() / 2)); //Set position to bottom left of screen
-	dial2.setBounds(dialArea.removeFromRight(area.getWidth() / 2)); //Set position to bottom right of screen
+    
+    
+    //auto area = getLocalBounds();
+    
+    midiInputList    .setBounds (area.removeFromTop (36).removeFromRight (getWidth() - 150).reduced (8));
+    keyboardComponent.setBounds (area.removeFromTop (80).reduced(8));
+    midiMessagesBox  .setBounds (area.reduced (8));
+	//frequencySlider.setBounds(100, 40, getWidth() - 130, 20);
+	//dial1.setBounds(dialArea.removeFromLeft(area.getWidth() / 2)); //Set position to bottom left of screen
+	//dial2.setBounds(dialArea.removeFromRight(area.getWidth() / 2)); //Set position to bottom right of screen
 																	//=================================================================================
 
 
@@ -134,3 +190,50 @@ void MainComponent::resized()
     // If you add any child components, this is where you should
     // update their positions.
 }
+void MainComponent::setMidiInput (int index)
+{
+    auto list = MidiInput::getDevices();
+    
+    deviceManager.removeMidiInputCallback (list[lastInputIndex], this);
+    
+    auto newInput = list[index];
+    
+    if (! deviceManager.isMidiInputEnabled (newInput))
+        deviceManager.setMidiInputEnabled (newInput, true);
+    
+    deviceManager.addMidiInputCallback (newInput, this);
+    midiInputList.setSelectedId (index + 1, dontSendNotification);
+    
+    lastInputIndex = index;
+}
+
+void MainComponent::handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message)
+{
+    const ScopedValueSetter<bool> scopedInputFlag (isAddingFromMidiInput, true);
+    keyboardState.processNextMidiEvent (message);
+    postMessageToList (message, source->getName());
+}
+
+void MainComponent::handleNoteOn (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
+{
+    if (! isAddingFromMidiInput)
+    {
+        auto m = MidiMessage::noteOn (midiChannel, midiNoteNumber, velocity);
+        m.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
+        postMessageToList (m, "On-Screen Keyboard");
+    }
+}
+
+void MainComponent::handleNoteOff (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
+{
+    if (! isAddingFromMidiInput)
+    {
+        auto m = MidiMessage::noteOff (midiChannel, midiNoteNumber);
+        m.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
+        postMessageToList (m, "On-Screen Keyboard");
+    }
+}
+
+
+
+
