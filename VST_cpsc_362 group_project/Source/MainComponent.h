@@ -148,12 +148,14 @@ private:
         midiMessagesBox.insertTextAtCaret (m + newLine);
     }
     
-    waveForms wave; ///call to wave form class in waveforms.h
-	
+     
+	dsp::Oscillator<float> wave;
     dsp::Oscillator<float> wave2; //created this instance to get the ball rolling on calling juce classes from documentation
+	dsp::Oscillator<float> wave3;
 	dsp::LadderFilter<float> lp1;
 	dsp::Reverb rv6;
-   
+	dsp::Gain<float> lvl;
+	std::vector<MidiMessage> notes;
 	
 	//midi classes
     
@@ -191,6 +193,7 @@ private:
 	Label dial1Label;
 	Label dial2Label;
 	Label durationLabel;
+	bool noteOn = false;
 	//=====================================================================================
 };
 

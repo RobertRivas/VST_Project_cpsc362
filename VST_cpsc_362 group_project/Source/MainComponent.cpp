@@ -111,12 +111,28 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 {
 	dsp::ProcessSpec spec;
 	spec.sampleRate = sampleRate;
+	spec.maximumBlockSize = 512;
+	spec.numChannels = 2;
     // This function will be called when the audio device is started, or when
     // its settings (i.e. sample rate, block size, etc) are changed.
-	
-   
+	wave.initialise([](float x) { return fmod(x, 1); }, 128);
+	//wave.initialise([](float x) { return std::sin(x); }, 128);
+	//wave.initialise([](float x) { return signbit(std::sin(x)); }, 128);
+	wave.prepare(spec);
+	//wave2.initialise([](float x) { return fmod(x,1); }, 128);
+	//wave2.initialise([](float x) { return std::sin(x); }, 128);
+	wave2.initialise([](float x) { return signbit(std::sin(x)); }, 128);
+	wave2.prepare(spec);
+	//wave3.initialise([](float x) { return fmod(x,1); }, 128);
+	//wave3.initialise([](float x) { return std::sin(x); }, 128);
+	wave3.initialise([](float x) { return signbit(std::sin(x)); }, 128);
+	wave3.prepare(spec);
 	lp1.prepare(spec);
 	rv6.prepare(spec);
+	lp1.setMode(dsp::LadderFilter<float>::Mode::LPF12);
+	lp1.setCutoffFrequencyHz(5000.0f);            
+	lp1.setResonance(0.7f);
+	lvl.prepare(spec);
 
     // You can use this function to initialise any resources you might need,
     // but be careful - it will be called on the audio thread, not the GUI thread.
@@ -126,23 +142,29 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-	lp1.setMode(dsp::LadderFilter<float>::Mode::LPF12);
+	
     float* leftSpeaker = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);//start of buffer fill
     float* rightSpeaker = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
 	float* channels[] = { leftSpeaker, rightSpeaker };
-    for (int sample = 0; sample < bufferToFill.buffer->getNumSamples(); ++sample){
+	
+    /*for (int sample = 0; sample < bufferToFill.buffer->getNumSamples(); ++sample){
         double theWave = wave.SawWave(sample, 440, 0.25); ////input to saw wave function might be a good start to apply MIDI
 		
 		leftSpeaker[sample] = rightSpeaker[sample] = theWave;
         
-    }
+    }*/
     // Your audio-processing code goes here!
     
     
 	dsp::AudioBlock<float> ab1 = dsp::AudioBlock<float>(channels, 2, bufferToFill.buffer->getNumSamples());
 	dsp::ProcessContextReplacing<float> pc = dsp::ProcessContextReplacing<float>(ab1);
     // For more details, see the help for AudioProcessor::getNextAudioBlock()
+	wave.process(pc);
+	wave2.process(pc);
+	wave3.process(pc);
 	lp1.process(pc);
+	lvl.process(pc);
+	
 	rv6.process(pc);
 	
     // Right now we are not producing any data, in which case we need to clear the buffer
@@ -221,6 +243,12 @@ void MainComponent::handleNoteOn (MidiKeyboardState*, int midiChannel, int midiN
         auto m = MidiMessage::noteOn (midiChannel, midiNoteNumber, velocity);
         m.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
         postMessageToList (m, "On-Screen Keyboard");
+		wave.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 432));
+		wave2.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 432));
+		wave3.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 432));
+
+		lvl.setGainLinear(velocity);
+		
     }
 }
 
@@ -231,6 +259,9 @@ void MainComponent::handleNoteOff (MidiKeyboardState*, int midiChannel, int midi
         auto m = MidiMessage::noteOff (midiChannel, midiNoteNumber);
         m.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
         postMessageToList (m, "On-Screen Keyboard");
+		
+		
+		//lvl.setGainLinear(0);
     }
 }
 
