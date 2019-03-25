@@ -13,33 +13,18 @@
 
 class waveForms {
     
- 
+    
+
+    
+
 
     int time;
     double freq;
     double amp;
 public:
+    
 
-	void setTime(int t) {
-		time = t;
-	}
-	void setFreq(double f) {
-		freq = f;
-	}
-	void setAmp(double a) {
-		amp = a;
-	}
-
-	double getFreq() {
-		return freq;
-	}
-	int getTime() {
-		return time;
-	}
-	double getAmp() {
-		return amp;
-	}
-
+    
     double SawWave(int time, double freq, double amp) { /////saw wave function
         
         double sawIncr = (2 * freq) / 44100;
@@ -50,5 +35,6 @@ public:
         
         return sawValue * amp;
     }
+	
     
 };
