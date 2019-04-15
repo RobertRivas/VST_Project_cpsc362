@@ -1,8 +1,6 @@
 /*
   ==============================================================================
-
     This file was auto-generated!
-
   ==============================================================================
 */
 
@@ -10,9 +8,7 @@
 
 /*
   ==============================================================================
-
     This file was auto-generated!
-
   ==============================================================================
 */
 
@@ -26,7 +22,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent   : public AudioAppComponent, public Slider::Listener, private MidiInputCallback,
+class MainComponent   : public AudioAppComponent, public Slider::Listener, public Button::Listener, private MidiInputCallback,
 private MidiKeyboardStateListener
 {
 public:
@@ -40,25 +36,39 @@ public:
     void releaseResources() override;
 	
 	void sliderValueChanged(Slider * slider)  override{
-		if (slider == &frequencySlider) {
+		if (slider == &cutoffFrequencySlider) {
 			double frequency = slider->getValue();
-			//Add behavior for when we make changed to the sliders
-			//since this is a frequency slider maybe update the frequency like
 			lp1.setCutoffFrequencyHz(frequency);
 		}
-		else if (slider == &dial1) {
-			//add behavior here
+		else if (slider == &resonanceSlider) {
 			double res = slider->getValue();
 
 			lp1.setResonance(res);
 		}
-		else if (slider == &dial2) {
-			//add behavior here
+		else if (slider == &driveSlider) {
 			double drv = slider->getValue();
 
 			lp1.setDrive(drv);
 		}
 	}
+	void buttonClicked(Button * button) override {
+		if (button == &filterButton) 
+		{
+			if (!filterType)
+			{
+				filterButton.setButtonText("high pass");
+				filterType = true;
+				//add code here to actually change the filter being used
+			}
+			else 
+			{
+				filterButton.setButtonText("low pass");
+				filterType = false;
+				//add code here to actually change the filter being used
+			}
+		}
+	}
+	
     void setMidiInput (int index);
     void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message) override;
     
@@ -185,17 +195,23 @@ private:
 	
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 		//=======================members used for gui implementation===========================
-		bool loading;//flag variable we can use to determine whether we're starting with new audio settings or loading from saved presets
-	Slider dial1;
-	Slider dial2;
-	Slider frequencySlider;
-	Label frequencyLabel;
-	Label dial1Label;
-	Label dial2Label;
-	Label durationLabel;
+	bool loading;//flag variable we can use to determine whether we're starting with new audio settings or loading from saved presets
+	
+	
+	
+	
+	
+	//Filter Sliders and Labels
+	Slider resonanceSlider;
+	Label resonanceLabel;
+	Slider cutoffFrequencySlider;
+	Label cutfrequencyLabel;
+	Slider driveSlider;
+	Label driveLabel;
+	TextButton filterButton;
+	Label filterLabel;
+
+	bool filterType = false; // false = low pass, true = high pass
 	bool noteOn = false;
 	//=====================================================================================
 };
-
-
-
