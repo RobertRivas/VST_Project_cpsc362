@@ -51,43 +51,54 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
     midiMessagesBox.setColour (TextEditor::outlineColourId, Colour (0x1c000000));
     midiMessagesBox.setColour (TextEditor::shadowColourId, Colour (0x16000000));
     
-    
-    
-    
-    /*
-    
-	dial1.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag); //configure sliders' properties
-	dial1.setTextBoxStyle(Slider::TextBoxBelow, false, 120, dial1.getTextBoxHeight());
-	dial1.setRange(0, 1);
-	dial1.setValue(0.5);
-	dial1Label.setText("Resonance", dontSendNotification);
-	dial1Label.attachToComponent(&dial1, false);
-	dial1.addListener(this);				//use listener class to detect our changes to the slider values
-	addAndMakeVisible(dial1);
-	addAndMakeVisible(dial1Label);									//Make sliders & labels visible
+	
+   
+	
+	
+	
+	
+	
+	resonanceSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag); //configure sliders' properties
+	resonanceSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, resonanceSlider.getTextBoxHeight());
+	resonanceSlider.setRange(0, 1);
+	resonanceSlider.setValue(0.5);
+	resonanceLabel.setText("Resonance", dontSendNotification);
+	resonanceLabel.attachToComponent(&resonanceSlider, false);
+	resonanceSlider.addListener(this);				//use listener class to detect our changes to the slider values
+	addAndMakeVisible(resonanceSlider);
+	addAndMakeVisible(resonanceLabel);									//Make sliders & labels visible
 
-	dial2.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
-	dial2.setTextBoxStyle(Slider::TextBoxBelow, false, 120, dial2.getTextBoxHeight());
-	dial2.setRange(1, 100);
-	dial2.setValue(50);
-	dial2Label.setText("Drive", dontSendNotification);
-	dial2Label.attachToComponent(&dial2, false);
-	dial2.addListener(this);
-	addAndMakeVisible(dial2);
-	addAndMakeVisible(dial2Label);
+	driveSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+	driveSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, driveSlider.getTextBoxHeight());
+	driveSlider.setRange(1, 100);
+	driveSlider.setValue(50);
+	driveLabel.setText("Drive", dontSendNotification);
+	driveLabel.attachToComponent(&driveSlider, false);
+	driveSlider.addListener(this);
+	addAndMakeVisible(driveSlider);
+	addAndMakeVisible(driveLabel);
 
-	frequencySlider.setRange(20, 12000);
-	frequencySlider.setValue(6000);
-	frequencySlider.setSkewFactorFromMidPoint(6000.0);
-	frequencySlider.setTextBoxStyle(Slider::TextBoxLeft, false, 120, frequencySlider.getTextBoxHeight());
-	frequencySlider.setTextValueSuffix(" Hz");					//example slider value suffix
-	frequencyLabel.setText("Frequency", dontSendNotification); // This is just an example label
-	frequencyLabel.attachToComponent(&frequencySlider, true);
-	frequencySlider.addListener(this);
-	addAndMakeVisible(frequencyLabel);
-	addAndMakeVisible(frequencySlider);
+	cutoffFrequencySlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	cutoffFrequencySlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
+	cutoffFrequencySlider.setRange(20, 12000);
+	cutoffFrequencySlider.setValue(6000);
+	cutoffFrequencySlider.setSkewFactorFromMidPoint(6000.0);
+	cutoffFrequencySlider.setTextValueSuffix(" Hz");
+	cutfrequencyLabel.setText("Cutoff Frequency", dontSendNotification);
+	cutfrequencyLabel.attachToComponent(&cutoffFrequencySlider, false);
+	cutoffFrequencySlider.addListener(this);
+	addAndMakeVisible(cutfrequencyLabel);
+	addAndMakeVisible(cutoffFrequencySlider);
 
-	*/
+	filterButton.setButtonText("low pass"); //Default 
+	filterButton.setToggleState(false, NotificationType::dontSendNotification);
+	filterLabel.setText("Filter Type", dontSendNotification);
+	filterLabel.attachToComponent(&filterButton, false);
+	filterButton.addListener(this);
+	addAndMakeVisible(filterButton);
+	addAndMakeVisible(filterLabel);
+
+
 	
 	// Make sure you set the size of the component after
     // you add any child components.
@@ -193,15 +204,25 @@ void MainComponent::paint (Graphics& g)
 void MainComponent::resized()
 {
 	//=========================Slider Sizing and positioning============================
-	Rectangle<int> area = getLocalBounds();	//This rectangles are used to map sliders on screen
-	Rectangle<int> dialArea = area.removeFromBottom(area.getHeight() / 2); //dialArea targets the bottom of screen
-    
-    
+	Rectangle<int> area = getLocalBounds();	//This rectangle is used to scalably map sliders on screen
+	
+	Rectangle<int> keyboadMidiArea = area.removeFromTop(area.getHeight() / 2.5); //Keyboard and midi message box placed at top third of the screen
+	midiInputList.setBounds(keyboadMidiArea.removeFromTop(30).removeFromRight(getWidth() - 150).reduced(8));
+	keyboardComponent.setBounds(keyboadMidiArea.removeFromTop(80).reduced(8));
+	midiMessagesBox.setBounds(keyboadMidiArea.reduced(8));
+	
+	Rectangle<int> sliderDialArea = area.removeFromTop(area.getHeight() - (area.getHeight() / 3)); //dials and sliders will fall right below keyboard and midi message box
+	Rectangle<int> sdRow1 = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 2); //Top row will house the filters section
+	Rectangle<int> sdRow2 = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 2);//Bottom row will house oscillator and mixer sections
+
+	filterButton.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 5));
+	cutoffFrequencySlider.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 4));
+	resonanceSlider.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 3));
+	driveSlider.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 3));
+
     //auto area = getLocalBounds();
     
-    midiInputList    .setBounds (area.removeFromTop (36).removeFromRight (getWidth() - 150).reduced (8));
-    keyboardComponent.setBounds (area.removeFromTop (80).reduced(8));
-    midiMessagesBox  .setBounds (area.reduced (8));
+
 	//frequencySlider.setBounds(100, 40, getWidth() - 130, 20);
 	//dial1.setBounds(dialArea.removeFromLeft(area.getWidth() / 2)); //Set position to bottom left of screen
 	//dial2.setBounds(dialArea.removeFromRight(area.getWidth() / 2)); //Set position to bottom right of screen
@@ -264,7 +285,3 @@ void MainComponent::handleNoteOff (MidiKeyboardState*, int midiChannel, int midi
 		//lvl.setGainLinear(0);
     }
 }
-
-
-
-
