@@ -40,16 +40,7 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
     addAndMakeVisible (keyboardComponent);
     keyboardState.addListener (this);
     
-    addAndMakeVisible (midiMessagesBox);
-    midiMessagesBox.setMultiLine (true);
-    midiMessagesBox.setReturnKeyStartsNewLine (true);
-    midiMessagesBox.setReadOnly (true);
-    midiMessagesBox.setScrollbarsShown (true);
-    midiMessagesBox.setCaretVisible (false);
-    midiMessagesBox.setPopupMenuEnabled (true);
-    midiMessagesBox.setColour (TextEditor::backgroundColourId, Colour (0x32ffffff));
-    midiMessagesBox.setColour (TextEditor::outlineColourId, Colour (0x1c000000));
-    midiMessagesBox.setColour (TextEditor::shadowColourId, Colour (0x16000000));
+
     
 	
    
@@ -206,21 +197,33 @@ void MainComponent::resized()
 	//=========================Slider Sizing and positioning============================
 	Rectangle<int> area = getLocalBounds();	//This rectangle is used to scalably map sliders on screen
 	
-	Rectangle<int> keyboadMidiArea = area.removeFromTop(area.getHeight() / 2.5); //Keyboard and midi message box placed at top third of the screen
+	Rectangle<int> keyboadMidiArea = area.removeFromTop(area.getHeight() / 4); //Keyboard and midi message box placed at top third of the screen
 	midiInputList.setBounds(keyboadMidiArea.removeFromTop(30).removeFromRight(getWidth() - 150).reduced(8));
 	keyboardComponent.setBounds(keyboadMidiArea.removeFromTop(80).reduced(8));
-	midiMessagesBox.setBounds(keyboadMidiArea.reduced(8));
 	
 	Rectangle<int> sliderDialArea = area.removeFromTop(area.getHeight() - (area.getHeight() / 3)); //dials and sliders will fall right below keyboard and midi message box
-	Rectangle<int> sdRow1 = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 2); //Top row will house the filters section
-	Rectangle<int> sdRow2 = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 2);//Bottom row will house oscillator and mixer sections
+	Rectangle<int> filterSection = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 3); //First row will house the filters section
+	Rectangle<int> oscillatorSection = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 3);//Second row will house oscillator section
+	Rectangle<int> delaySection = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 3); //Third row will house the delay section
+	Rectangle<int> reverbSection = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 3); //Fourth row will house the reverb section
 
-	filterButton.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 5));
-	cutoffFrequencySlider.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 4));
-	resonanceSlider.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 3));
-	driveSlider.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 3));
+	//**************************Filter UI********************************************************//
+	filterButton.setBounds(filterSection.removeFromLeft(filterSection.getWidth() / 5));
+	cutoffFrequencySlider.setBounds(filterSection.removeFromLeft(filterSection.getWidth() / 4));
+	resonanceSlider.setBounds(filterSection.removeFromLeft(filterSection.getWidth() / 3));
+	driveSlider.setBounds(filterSection.removeFromLeft(filterSection.getWidth() / 3));
+	//******************************************************************************************//
+	//**************************Oscillator UI***************************************************//
 
-    //auto area = getLocalBounds();
+
+	//******************************************************************************************//
+	//**************************Delay UI********************************************************//
+
+	//******************************************************************************************//
+	//**************************Reverb UI*******************************************************//
+
+	//******************************************************************************************//
+	//auto area = getLocalBounds();
     
 
 	//frequencySlider.setBounds(100, 40, getWidth() - 130, 20);
