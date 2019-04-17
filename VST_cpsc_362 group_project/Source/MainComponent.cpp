@@ -8,7 +8,6 @@
 
 //==============================================================================
 
-
 MainComponent::MainComponent() : keyboardComponent (keyboardState, MidiKeyboardComponent::horizontalKeyboard),
 startTime (Time::getMillisecondCounterHiRes() * 0.001)
 {
@@ -39,17 +38,9 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
      setMidiInput (0);
     addAndMakeVisible (keyboardComponent);
     keyboardState.addListener (this);
-    
-
-    
 	
-   
-	
-	
-	
-	
-	
-	resonanceSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag); //configure sliders' properties
+//**************************Filter UI*******************************************************************//
+	resonanceSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalDrag); //configure sliders' properties
 	resonanceSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, resonanceSlider.getTextBoxHeight());
 	resonanceSlider.setRange(0, 1);
 	resonanceSlider.setValue(0.5);
@@ -59,7 +50,7 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
 	addAndMakeVisible(resonanceSlider);
 	addAndMakeVisible(resonanceLabel);									//Make sliders & labels visible
 
-	driveSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+	driveSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalDrag);
 	driveSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, driveSlider.getTextBoxHeight());
 	driveSlider.setRange(1, 100);
 	driveSlider.setValue(50);
@@ -81,19 +72,189 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
 	addAndMakeVisible(cutfrequencyLabel);
 	addAndMakeVisible(cutoffFrequencySlider);
 
-	filterButton.setButtonText("low pass"); //Default 
-	filterButton.setToggleState(false, NotificationType::dontSendNotification);
+	filterTypeButton.setButtonText("low pass"); //Default 
+	filterTypeButton.setToggleState(false, NotificationType::dontSendNotification);
 	filterLabel.setText("Filter Type", dontSendNotification);
-	filterLabel.attachToComponent(&filterButton, false);
-	filterButton.addListener(this);
-	addAndMakeVisible(filterButton);
+	filterLabel.attachToComponent(&filterTypeButton, false);
+	filterTypeButton.addListener(this);
+	addAndMakeVisible(filterTypeButton);
 	addAndMakeVisible(filterLabel);
+//**********************************************************************************************************//
 
+//**************************Oscillator UI*******************************************************************//
+    oscillator1.setButtonText("off");
+    oscillator1.setToggleState(false, NotificationType::dontSendNotification);
+    oscillator1.addListener(this);
+    osc1Label.setText("Oscillator 1", dontSendNotification);
+    osc1Label.attachToComponent(&oscillator1, false);
 
+    osc1VolumeSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	osc1VolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
+	osc1VolumeSlider.setRange(20, 12000);            //These values need to be changed
+	osc1VolumeSlider.setValue(6000);                 //These values need to be changed
+	osc1VolumeSlider.setTextValueSuffix(" Hz");      //These values need to be changed
+	osc1VolumeSlider.addListener(this);
+	osc1VolumeLabel.setText("Volume", dontSendNotification);
+	osc1VolumeLabel.attachToComponent(&osc1VolumeSlider, false);
 	
-	// Make sure you set the size of the component after
-    // you add any child components.
-    setSize (800, 600);
+
+	osc1TuneSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	osc1TuneSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
+	osc1TuneSlider.setRange(20, 12000);              //These values need to be changed
+	osc1TuneSlider.setValue(6000);                   //These values need to be changed
+	osc1TuneSlider.setTextValueSuffix(" Hz");        //These values need to be changed
+	osc1TuneSlider.addListener(this);
+	osc1TuneLabel.setText("Tune", dontSendNotification);
+	osc1TuneLabel.attachToComponent(&osc1TuneSlider, false);
+	
+
+	addAndMakeVisible(oscillator1);
+	addAndMakeVisible(osc1Label);
+	addAndMakeVisible(osc1VolumeSlider);
+	addAndMakeVisible(osc1VolumeLabel);
+	addAndMakeVisible(osc1TuneSlider);
+	addAndMakeVisible(osc1TuneLabel);
+
+	/**********************************************************************/
+	oscillator2.setButtonText("off");
+	oscillator2.setToggleState(false, NotificationType::dontSendNotification);
+	oscillator2.addListener(this);
+	osc2Label.setText("Oscillator 2", dontSendNotification);
+	osc2Label.attachToComponent(&oscillator2, false);
+
+	osc2VolumeSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	osc2VolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
+	osc2VolumeSlider.setRange(20, 12000);            //These values need to be changed
+	osc2VolumeSlider.setValue(6000);                 //These values need to be changed
+	osc2VolumeSlider.setTextValueSuffix(" Hz");      //These values need to be changed
+	osc2VolumeSlider.addListener(this);
+	osc2VolumeLabel.setText("Volume", dontSendNotification);
+	osc2VolumeLabel.attachToComponent(&osc2VolumeSlider, false);
+
+
+	osc2TuneSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	osc2TuneSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
+	osc2TuneSlider.setRange(20, 12000);              //These values need to be changed
+	osc2TuneSlider.setValue(6000);                   //These values need to be changed
+	osc2TuneSlider.setTextValueSuffix(" Hz");        //These values need to be changed
+	osc2TuneSlider.addListener(this);
+	osc2TuneLabel.setText("Tune", dontSendNotification);
+	osc2TuneLabel.attachToComponent(&osc2TuneSlider, false);
+
+
+	addAndMakeVisible(oscillator2);
+	addAndMakeVisible(osc2Label);
+	addAndMakeVisible(osc2VolumeSlider);
+	addAndMakeVisible(osc2VolumeLabel);
+	addAndMakeVisible(osc2TuneSlider);
+	addAndMakeVisible(osc2TuneLabel);
+
+	/**********************************************************************/
+
+	oscillator3.setButtonText("off");
+	oscillator3.setToggleState(false, NotificationType::dontSendNotification);
+	oscillator3.addListener(this);
+	osc3Label.setText("Oscillator 3", dontSendNotification);
+	osc3Label.attachToComponent(&oscillator3, false);
+
+	osc3VolumeSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	osc3VolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
+	osc3VolumeSlider.setRange(20, 12000);            //These values need to be changed
+	osc3VolumeSlider.setValue(6000);                 //These values need to be changed
+	osc3VolumeSlider.setTextValueSuffix(" Hz");      //These values need to be changed
+	osc3VolumeSlider.addListener(this);
+	osc3VolumeLabel.setText("Volume", dontSendNotification);
+	osc3VolumeLabel.attachToComponent(&osc3VolumeSlider, false);
+
+
+	osc3TuneSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	osc3TuneSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
+	osc3TuneSlider.setRange(20, 12000);              //These values need to be changed
+	osc3TuneSlider.setValue(6000);                   //These values need to be changed
+	osc3TuneSlider.setTextValueSuffix(" Hz");        //These values need to be changed
+	osc3TuneSlider.addListener(this);
+	osc3TuneLabel.setText("Tune", dontSendNotification);
+	osc3TuneLabel.attachToComponent(&osc3TuneSlider, false);
+
+
+	addAndMakeVisible(oscillator3);
+	addAndMakeVisible(osc3Label);
+	addAndMakeVisible(osc3VolumeSlider);
+	addAndMakeVisible(osc3VolumeLabel);
+	addAndMakeVisible(osc3TuneSlider);
+	addAndMakeVisible(osc3TuneLabel);
+
+//**********************************************************************************************************//
+//*******************************Delay UI*******************************************************************//
+	delayButton.setButtonText("off"); // Do we want to start with no delay?
+	delayButton.setToggleState(false, NotificationType::dontSendNotification);
+	delayButton.addListener(this);
+	delayLabel.setText("Delay", dontSendNotification);
+	delayLabel.attachToComponent(&delayButton, false);
+
+	delayMixSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalDrag);
+	delayMixSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight()); //Do we need a textbox here?
+	delayMixSlider.setRange(20, 12000);            //These values need to be changed
+	delayMixSlider.setValue(6000);                 //These values need to be changed
+	delayMixSlider.setTextValueSuffix(" Hz");      //These values need to be changed
+	delayMixSlider.addListener(this);
+	delayMixLabel.setText("dry/wet", dontSendNotification);
+	delayMixLabel.attachToComponent(&delayMixSlider, false);
+
+	delayLevelSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalDrag);
+	delayLevelSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
+	delayLevelSlider.setRange(20, 12000);              //These values need to be changed
+	delayLevelSlider.setValue(6000);                   //These values need to be changed
+	delayLevelSlider.setTextValueSuffix(" Hz");        //These values need to be changed
+	delayLevelSlider.addListener(this);
+	delayLevelLabel.setText("Level", dontSendNotification);
+	delayLevelLabel.attachToComponent(&delayLevelSlider, false);
+
+	addAndMakeVisible(delayButton);
+	addAndMakeVisible(delayLabel);
+	addAndMakeVisible(delayMixSlider);
+	addAndMakeVisible(delayMixLabel);
+	addAndMakeVisible(delayLevelSlider);
+	addAndMakeVisible(delayLevelLabel);
+
+
+//**********************************************************************************************************//
+//******************************Reverb UI*******************************************************************//	
+	reverbButton.setButtonText("off"); // Do we want to start with no reverb?
+	reverbButton.setToggleState(false, NotificationType::dontSendNotification);
+	reverbButton.addListener(this);
+	reverbLabel.setText("Reverb", dontSendNotification);
+	reverbLabel.attachToComponent(&reverbButton, false);
+
+	reverbMixSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalDrag);
+	reverbMixSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight()); //Do we need a textbox here?
+	reverbMixSlider.setRange(20, 12000);            //These values need to be changed
+	reverbMixSlider.setValue(6000);                 //These values need to be changed
+	reverbMixSlider.setTextValueSuffix(" Hz");      //These values need to be changed
+	reverbMixSlider.addListener(this);
+	reverbMixLabel.setText("dry/wet", dontSendNotification);
+	reverbMixLabel.attachToComponent(&reverbMixSlider, false);
+
+	reverbLevelSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalDrag);
+	reverbLevelSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
+	reverbLevelSlider.setRange(20, 12000);              //These values need to be changed
+	reverbLevelSlider.setValue(6000);                   //These values need to be changed
+	reverbLevelSlider.setTextValueSuffix(" Hz");        //These values need to be changed
+	reverbLevelSlider.addListener(this);
+	reverbLevelLabel.setText("Level", dontSendNotification);
+	reverbLevelLabel.attachToComponent(&reverbLevelSlider, false);
+
+	addAndMakeVisible(reverbButton);
+	addAndMakeVisible(reverbLabel);
+	addAndMakeVisible(reverbMixSlider);
+	addAndMakeVisible(reverbMixLabel);
+	addAndMakeVisible(reverbLevelSlider);
+	addAndMakeVisible(reverbLevelLabel);
+//**********************************************************************************************************//
+
+	addAndMakeVisible(visualiser);
+
+    setSize (800, 700);
 	
 	
     // specify the number of input and output channels that we want to open
@@ -140,6 +301,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     // but be careful - it will be called on the audio thread, not the GUI thread.
 
     // For more details, see the help for AudioProcessor::prepareToPlay()
+	visualiser.clear();
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
@@ -172,6 +334,7 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     // Right now we are not producing any data, in which case we need to clear the buffer
     // (to prevent the output of random noise)
     //bufferToFill.clearActiveBufferRegion(); ///had to comment this out it was killing output
+	visualiser.pushBuffer(bufferToFill);
 }
 
 void MainComponent::releaseResources()
@@ -197,44 +360,56 @@ void MainComponent::resized()
 	//=========================Slider Sizing and positioning============================
 	Rectangle<int> area = getLocalBounds();	//This rectangle is used to scalably map sliders on screen
 	
-	Rectangle<int> keyboadMidiArea = area.removeFromTop(area.getHeight() / 4); //Keyboard and midi message box placed at top third of the screen
+	Rectangle<int> keyboadMidiArea = area.removeFromTop(area.getHeight() / 5); //Keyboard and midi message box placed at top third of the screen
 	midiInputList.setBounds(keyboadMidiArea.removeFromTop(30).removeFromRight(getWidth() - 150).reduced(8));
 	keyboardComponent.setBounds(keyboadMidiArea.removeFromTop(80).reduced(8));
+
+	visualiser.setBounds(area.removeFromTop(150));
+	area.removeFromTop(40); // This separates the keyboard and the audio visualizer
 	
-	Rectangle<int> sliderDialArea = area.removeFromTop(area.getHeight() - (area.getHeight() / 3)); //dials and sliders will fall right below keyboard and midi message box
-	Rectangle<int> filterSection = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 3); //First row will house the filters section
-	Rectangle<int> oscillatorSection = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 3);//Second row will house oscillator section
-	Rectangle<int> delaySection = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 3); //Third row will house the delay section
-	Rectangle<int> reverbSection = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 3); //Fourth row will house the reverb section
+	Rectangle<int> filterSection = area.removeFromTop(80); //First row will house the filters section
+	area.removeFromTop(40); // This separates the Filter and oscillator section. Purely aesthetic
+	Rectangle<int> oscillatorSection = area.removeFromTop(90);//Second row will house oscillator section
+	area.removeFromTop(40); // This separates the Filter and oscillator section. Purely aesthetic
+	Rectangle<int> reverbAndDelaySection = area.removeFromTop(100); //Third row will house the delay and reverb sections
+	area.removeFromTop(40); // This separates the Filter and oscillator section. Purely aesthetic
 
 	//**************************Filter UI********************************************************//
-	filterButton.setBounds(filterSection.removeFromLeft(filterSection.getWidth() / 5));
+	filterSection.removeFromLeft(filterSection.getWidth() / 6);
+	filterTypeButton.setBounds(filterSection.removeFromLeft(filterSection.getWidth() / 5));
 	cutoffFrequencySlider.setBounds(filterSection.removeFromLeft(filterSection.getWidth() / 4));
 	resonanceSlider.setBounds(filterSection.removeFromLeft(filterSection.getWidth() / 3));
 	driveSlider.setBounds(filterSection.removeFromLeft(filterSection.getWidth() / 3));
 	//******************************************************************************************//
 	//**************************Oscillator UI***************************************************//
+	oscillator1.setBounds(oscillatorSection.removeFromLeft(70));
+	osc1VolumeSlider.setBounds(oscillatorSection.removeFromLeft(100));
+	osc1TuneSlider.setBounds(oscillatorSection.removeFromLeft(100));
 
+	oscillator2.setBounds(oscillatorSection.removeFromLeft(70));
+	osc2VolumeSlider.setBounds(oscillatorSection.removeFromLeft(100));
+	osc2TuneSlider.setBounds(oscillatorSection.removeFromLeft(100));
+
+	oscillator3.setBounds(oscillatorSection.removeFromLeft(70));
+	osc3VolumeSlider.setBounds(oscillatorSection.removeFromLeft(100));
+	osc3TuneSlider.setBounds(oscillatorSection.removeFromLeft(100));
+	
 
 	//******************************************************************************************//
 	//**************************Delay UI********************************************************//
-
+	reverbAndDelaySection.removeFromLeft(reverbAndDelaySection.getWidth() / 7);
+	delayButton.setBounds(reverbAndDelaySection.removeFromLeft(70));
+	delayMixSlider.setBounds(reverbAndDelaySection.removeFromLeft(100));
+	delayLevelSlider.setBounds(reverbAndDelaySection.removeFromLeft(100));
 	//******************************************************************************************//
 	//**************************Reverb UI*******************************************************//
+	reverbAndDelaySection.removeFromLeft(50);
+	reverbButton.setBounds(reverbAndDelaySection.removeFromLeft(70));
+	reverbMixSlider.setBounds(reverbAndDelaySection.removeFromLeft(100));
+	reverbLevelSlider.setBounds(reverbAndDelaySection.removeFromLeft(100));
 
 	//******************************************************************************************//
-	//auto area = getLocalBounds();
-    
 
-	//frequencySlider.setBounds(100, 40, getWidth() - 130, 20);
-	//dial1.setBounds(dialArea.removeFromLeft(area.getWidth() / 2)); //Set position to bottom left of screen
-	//dial2.setBounds(dialArea.removeFromRight(area.getWidth() / 2)); //Set position to bottom right of screen
-																	//=================================================================================
-
-
-    // This is called when the MainContentComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
 }
 void MainComponent::setMidiInput (int index)
 {
