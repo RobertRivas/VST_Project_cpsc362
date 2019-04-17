@@ -83,7 +83,7 @@ public:
 		else if (slider == &delayMixSlider) {
 
 		}
-		else if (slider == &delayLevelSlider) {
+		else if (slider == &delayFeedbackSlider) {
 
 		}
 		else if (slider == &reverbMixSlider) {
@@ -388,8 +388,8 @@ private:
 	Label delayLabel;
 	Slider delayMixSlider;
 	Label delayMixLabel;
-	Slider delayLevelSlider;
-	Label delayLevelLabel;
+	Slider delayFeedbackSlider;
+	Label delayFeedbackLabel;
 
 	bool delayOn = false; // false = delay off, true = delay on
 	//******************************************************************************************//

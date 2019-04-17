@@ -90,9 +90,9 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
 
     osc1VolumeSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
 	osc1VolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
-	osc1VolumeSlider.setRange(20, 12000);            //These values need to be changed
+	osc1VolumeSlider.setRange(0, 100);            //These values need to be changed
 	osc1VolumeSlider.setValue(6000);                 //These values need to be changed
-	osc1VolumeSlider.setTextValueSuffix(" Hz");      //These values need to be changed
+	osc1VolumeSlider.setTextValueSuffix("");      //These values need to be changed
 	osc1VolumeSlider.addListener(this);
 	osc1VolumeLabel.setText("Volume", dontSendNotification);
 	osc1VolumeLabel.attachToComponent(&osc1VolumeSlider, false);
@@ -101,7 +101,7 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
 	osc1TuneSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
 	osc1TuneSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
 	osc1TuneSlider.setRange(20, 12000);              //These values need to be changed
-	osc1TuneSlider.setValue(6000);                   //These values need to be changed
+	osc1TuneSlider.setValue(50);                   //These values need to be changed
 	osc1TuneSlider.setTextValueSuffix(" Hz");        //These values need to be changed
 	osc1TuneSlider.addListener(this);
 	osc1TuneLabel.setText("Tune", dontSendNotification);
@@ -124,8 +124,8 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
 
 	osc2VolumeSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
 	osc2VolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
-	osc2VolumeSlider.setRange(20, 12000);            //These values need to be changed
-	osc2VolumeSlider.setValue(6000);                 //These values need to be changed
+	osc2VolumeSlider.setRange(0, 100);            //These values need to be changed
+	osc2VolumeSlider.setValue(50);                 //These values need to be changed
 	osc2VolumeSlider.setTextValueSuffix(" Hz");      //These values need to be changed
 	osc2VolumeSlider.addListener(this);
 	osc2VolumeLabel.setText("Volume", dontSendNotification);
@@ -159,8 +159,8 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
 
 	osc3VolumeSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
 	osc3VolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
-	osc3VolumeSlider.setRange(20, 12000);            //These values need to be changed
-	osc3VolumeSlider.setValue(6000);                 //These values need to be changed
+	osc3VolumeSlider.setRange(0, 100);            //These values need to be changed
+	osc3VolumeSlider.setValue(50);                 //These values need to be changed
 	osc3VolumeSlider.setTextValueSuffix(" Hz");      //These values need to be changed
 	osc3VolumeSlider.addListener(this);
 	osc3VolumeLabel.setText("Volume", dontSendNotification);
@@ -194,28 +194,28 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
 
 	delayMixSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalDrag);
 	delayMixSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight()); //Do we need a textbox here?
-	delayMixSlider.setRange(20, 12000);            //These values need to be changed
-	delayMixSlider.setValue(6000);                 //These values need to be changed
-	delayMixSlider.setTextValueSuffix(" Hz");      //These values need to be changed
+	delayMixSlider.setRange(0, 100);            //These values need to be changed
+	delayMixSlider.setValue(50);                 //These values need to be changed
+	delayMixSlider.setTextValueSuffix(" %");      //These values need to be changed
 	delayMixSlider.addListener(this);
 	delayMixLabel.setText("dry/wet", dontSendNotification);
 	delayMixLabel.attachToComponent(&delayMixSlider, false);
 
-	delayLevelSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalDrag);
-	delayLevelSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
-	delayLevelSlider.setRange(20, 12000);              //These values need to be changed
-	delayLevelSlider.setValue(6000);                   //These values need to be changed
-	delayLevelSlider.setTextValueSuffix(" Hz");        //These values need to be changed
-	delayLevelSlider.addListener(this);
-	delayLevelLabel.setText("Level", dontSendNotification);
-	delayLevelLabel.attachToComponent(&delayLevelSlider, false);
+	delayFeedbackSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalDrag);
+	delayFeedbackSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
+	delayFeedbackSlider.setRange(20, 12000);              //These values need to be changed
+	delayFeedbackSlider.setValue(6000);                   //These values need to be changed
+	delayFeedbackSlider.setTextValueSuffix(" ");        //These values need to be changed
+	delayFeedbackSlider.addListener(this);
+	delayFeedbackLabel.setText("Feedback", dontSendNotification);
+	delayFeedbackLabel.attachToComponent(&delayFeedbackSlider, false);
 
 	addAndMakeVisible(delayButton);
 	addAndMakeVisible(delayLabel);
 	addAndMakeVisible(delayMixSlider);
 	addAndMakeVisible(delayMixLabel);
-	addAndMakeVisible(delayLevelSlider);
-	addAndMakeVisible(delayLevelLabel);
+	addAndMakeVisible(delayFeedbackSlider);
+	addAndMakeVisible(delayFeedbackLabel);
 
 
 //**********************************************************************************************************//
@@ -230,7 +230,7 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
 	reverbMixSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight()); //Do we need a textbox here?
 	reverbMixSlider.setRange(20, 12000);            //These values need to be changed
 	reverbMixSlider.setValue(6000);                 //These values need to be changed
-	reverbMixSlider.setTextValueSuffix(" Hz");      //These values need to be changed
+	reverbMixSlider.setTextValueSuffix(" %");      //These values need to be changed
 	reverbMixSlider.addListener(this);
 	reverbMixLabel.setText("dry/wet", dontSendNotification);
 	reverbMixLabel.attachToComponent(&reverbMixSlider, false);
@@ -239,9 +239,9 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
 	reverbLevelSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, cutoffFrequencySlider.getTextBoxHeight());
 	reverbLevelSlider.setRange(20, 12000);              //These values need to be changed
 	reverbLevelSlider.setValue(6000);                   //These values need to be changed
-	reverbLevelSlider.setTextValueSuffix(" Hz");        //These values need to be changed
+	reverbLevelSlider.setTextValueSuffix(" ");        //These values need to be changed
 	reverbLevelSlider.addListener(this);
-	reverbLevelLabel.setText("Level", dontSendNotification);
+	reverbLevelLabel.setText("Room Size", dontSendNotification);
 	reverbLevelLabel.attachToComponent(&reverbLevelSlider, false);
 
 	addAndMakeVisible(reverbButton);
@@ -400,7 +400,7 @@ void MainComponent::resized()
 	reverbAndDelaySection.removeFromLeft(reverbAndDelaySection.getWidth() / 7);
 	delayButton.setBounds(reverbAndDelaySection.removeFromLeft(70));
 	delayMixSlider.setBounds(reverbAndDelaySection.removeFromLeft(100));
-	delayLevelSlider.setBounds(reverbAndDelaySection.removeFromLeft(100));
+	delayFeedbackSlider.setBounds(reverbAndDelaySection.removeFromLeft(100));
 	//******************************************************************************************//
 	//**************************Reverb UI*******************************************************//
 	reverbAndDelaySection.removeFromLeft(50);
