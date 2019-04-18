@@ -74,10 +74,16 @@ public:
 		else if (slider == &delayFeedbackSlider) {
 
 		}
+		else if (slider == &delayTimeSlider) {
+
+		}
 		else if (slider == &reverbMixSlider) {
 
 		}
 		else if (slider == &reverbLevelSlider) {
+
+		}
+		else if (slider == &reverbDampingSlider) {
 
 		}
 	}
@@ -359,23 +365,33 @@ private:
 	//**************************Delay UI********************************************************//
 	TextButton delayButton;
 	Label delayLabel;
+	bool delayOn = false; // false = delay off, true = delay on
+
 	Slider delayMixSlider;
 	Label delayMixLabel;
+
 	Slider delayFeedbackSlider;
 	Label delayFeedbackLabel;
 
-	bool delayOn = false; // false = delay off, true = delay on
+	Slider delayTimeSlider;
+	Label delayTimeLabel;
+	
 	//******************************************************************************************//
 	//**************************Reverb UI*******************************************************//
 
 	TextButton reverbButton;
 	Label reverbLabel;
+	bool reverbOn = false; // false = reverb off, true = reverb on
+
 	Slider reverbMixSlider;
 	Label reverbMixLabel;
+
 	Slider reverbLevelSlider;
 	Label reverbLevelLabel;
 
-	bool reverbOn = false; // false = reverb off, true = reverb on
+	Slider reverbDampingSlider;
+	Label reverbDampingLabel;
+
 	//******************************************************************************************//
 
 	//=====================================================================================
