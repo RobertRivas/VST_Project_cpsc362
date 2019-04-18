@@ -1,5 +1,5 @@
 /*
-    This file was auto-generated!
+	This file was auto-generated!
   ==============================================================================
 */
 
@@ -8,57 +8,42 @@
 
 //==============================================================================
 
-
-MainComponent::MainComponent() : keyboardComponent (keyboardState, MidiKeyboardComponent::horizontalKeyboard),
-startTime (Time::getMillisecondCounterHiRes() * 0.001)
+MainComponent::MainComponent() : keyboardComponent(keyboardState, MidiKeyboardComponent::horizontalKeyboard),
+startTime(Time::getMillisecondCounterHiRes() * 0.001)
 {
-    setOpaque (true);
-    
-    addAndMakeVisible (midiInputListLabel);
-    midiInputListLabel.setText ("MIDI Input:", dontSendNotification);
-    midiInputListLabel.attachToComponent (&midiInputList, true);
-    
-    
-    addAndMakeVisible (midiInputList);
-    midiInputList.setTextWhenNoChoicesAvailable ("No MIDI Inputs Enabled");
-    auto midiInputs = MidiInput::getDevices();
-    midiInputList.addItemList (midiInputs, 1);
-    
-     // find the first enabled device and use that by default
-     for (auto midiInput : midiInputs)
-     {
-     if (deviceManager.isMidiInputEnabled (midiInput))
-     {
-     setMidiInput (midiInputs.indexOf (midiInput));
-     break;
-     }
-     }
-     
-     // if no enabled devices were found just use the first one in the list
-     if (midiInputList.getSelectedId() == 0)
-     setMidiInput (0);
-    addAndMakeVisible (keyboardComponent);
-    keyboardState.addListener (this);
-    
-    addAndMakeVisible (midiMessagesBox);
-    midiMessagesBox.setMultiLine (true);
-    midiMessagesBox.setReturnKeyStartsNewLine (true);
-    midiMessagesBox.setReadOnly (true);
-    midiMessagesBox.setScrollbarsShown (true);
-    midiMessagesBox.setCaretVisible (false);
-    midiMessagesBox.setPopupMenuEnabled (true);
-    midiMessagesBox.setColour (TextEditor::backgroundColourId, Colour (0x32ffffff));
-    midiMessagesBox.setColour (TextEditor::outlineColourId, Colour (0x1c000000));
-    midiMessagesBox.setColour (TextEditor::shadowColourId, Colour (0x16000000));
-    
-	
-   
+	setOpaque(true);
+
+	addAndMakeVisible(midiInputListLabel);
+	midiInputListLabel.setText("MIDI Input:", dontSendNotification);
+	midiInputListLabel.attachToComponent(&midiInputList, true);
+
+
+	addAndMakeVisible(midiInputList);
+	midiInputList.setTextWhenNoChoicesAvailable("No MIDI Inputs Enabled");
+	auto midiInputs = MidiInput::getDevices();
+	midiInputList.addItemList(midiInputs, 1);
+
+	// find the first enabled device and use that by default
+	for (auto midiInput : midiInputs)
+	{
+		if (deviceManager.isMidiInputEnabled(midiInput))
+		{
+			setMidiInput(midiInputs.indexOf(midiInput));
+			break;
+		}
+	}
+
+	// if no enabled devices were found just use the first one in the list
+	if (midiInputList.getSelectedId() == 0)
+		setMidiInput(0);
+	addAndMakeVisible(keyboardComponent);
+	keyboardState.addListener(this);
+
 	
 	
+	//**************************Filter UI*******************************************************************//
 	
-	
-	
-	resonanceSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag); //configure sliders' properties
+	resonanceSlider.setSliderStyle(Slider::SliderStyle::Rotary); //configure sliders' properties
 	resonanceSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, resonanceSlider.getTextBoxHeight());
 	resonanceSlider.setRange(0, 1);
 	resonanceSlider.setValue(0.5);
@@ -68,7 +53,7 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
 	addAndMakeVisible(resonanceSlider);
 	addAndMakeVisible(resonanceLabel);									//Make sliders & labels visible
 
-	driveSlider.setSliderStyle(Slider::SliderStyle::RotaryVerticalDrag);
+	driveSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	driveSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, driveSlider.getTextBoxHeight());
 	driveSlider.setRange(1, 100);
 	driveSlider.setValue(50);
@@ -90,42 +75,187 @@ startTime (Time::getMillisecondCounterHiRes() * 0.001)
 	addAndMakeVisible(cutfrequencyLabel);
 	addAndMakeVisible(cutoffFrequencySlider);
 
-	filterButton.setButtonText("low pass"); //Default 
-	filterButton.setToggleState(false, NotificationType::dontSendNotification);
-	filterLabel.setText("Filter Type", dontSendNotification);
-	filterLabel.attachToComponent(&filterButton, false);
-	filterButton.addListener(this);
-	addAndMakeVisible(filterButton);
-	addAndMakeVisible(filterLabel);
+	passFilterButton.setButtonText("low pass");
+	passFilterButton.setToggleState(false, NotificationType::dontSendNotification);
+	passFilterLabel.setText("Pass Filter", dontSendNotification);
+	passFilterLabel.attachToComponent(&passFilterButton, false);
+	passFilterButton.addListener(this);
+	addAndMakeVisible(passFilterButton);
+	addAndMakeVisible(passFilterLabel);
+
+	lfoFilterButton.setButtonText("off"); //Do we want this off by default? 
+	lfoFilterButton.setToggleState(false, NotificationType::dontSendNotification);
+	lfoFilterButton.addListener(this);
+	lfoFilterLabel.setText("LFO Filter", dontSendNotification);
+	lfoFilterLabel.attachToComponent(&lfoFilterButton, false);
+	addAndMakeVisible(lfoFilterButton);
+	addAndMakeVisible(lfoFilterLabel);
+
+	lfoFrequencySlider.setSliderStyle(Slider::SliderStyle::Rotary);
+	lfoFrequencySlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, lfoFrequencySlider.getTextBoxHeight());
+	lfoFrequencySlider.setRange(20, 12000);
+	lfoFrequencySlider.setValue(6000);
+	lfoFrequencySlider.setTextValueSuffix(" Hz");
+	lfoFrequencySlider.addListener(this);
+	lfoFrequencyLabel.setText("LFO Frequency", dontSendNotification);
+	lfoFrequencyLabel.attachToComponent(&lfoFrequencySlider, false);
+	addAndMakeVisible(lfoFrequencyLabel);
+	addAndMakeVisible(lfoFrequencySlider);
 
 
 	
-	// Make sure you set the size of the component after
-    // you add any child components.
-    setSize (800, 600);
-	
-	
-    // specify the number of input and output channels that we want to open
-    setAudioChannels (0, 2);
+	//**********************************************************************************************************//
+
+	//**************************Oscillator UI*******************************************************************//
+	masterVolumeSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+	masterVolumeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, masterVolumeSlider.getTextBoxHeight());
+	masterVolumeSlider.setRange(0, 100, 1);                //These values need to be changed
+	masterVolumeSlider.setValue(100);
+	masterVolumeSlider.addListener(this);
+	masterVolumeLabel.setText("Volume", dontSendNotification);
+	masterVolumeLabel.attachToComponent(&masterVolumeSlider, false);
+	addAndMakeVisible(masterVolumeSlider);
+	addAndMakeVisible(masterVolumeLabel);
+		
+		
+	oscillator1.setButtonText("sine");
+	oscillator1.setToggleState(false, NotificationType::dontSendNotification);
+	oscillator1.addListener(this);
+	osc1Label.setText("Oscillator 1", dontSendNotification);
+	osc1Label.attachToComponent(&oscillator1, false);
+	addAndMakeVisible(oscillator1);
+	addAndMakeVisible(osc1Label);
+
+	oscillator2.setButtonText("sine");
+	oscillator2.setToggleState(false, NotificationType::dontSendNotification);
+	oscillator2.addListener(this);
+	osc2Label.setText("Oscillator 2", dontSendNotification);
+	osc2Label.attachToComponent(&oscillator2, false);
+	addAndMakeVisible(oscillator2);
+	addAndMakeVisible(osc2Label);
+
+	oscillator3.setButtonText("sine");
+	oscillator3.setToggleState(false, NotificationType::dontSendNotification);
+	oscillator3.addListener(this);
+	osc3Label.setText("Oscillator 3", dontSendNotification);
+	osc3Label.attachToComponent(&oscillator3, false);
+	addAndMakeVisible(oscillator3);
+	addAndMakeVisible(osc3Label);
+
+	//**********************************************************************************************************//
+	//*******************************Delay UI*******************************************************************//
+	delayButton.setButtonText("off"); // Do we want to start with no delay?
+	delayButton.setToggleState(false, NotificationType::dontSendNotification);
+	delayButton.addListener(this);
+	delayLabel.setText("Delay", dontSendNotification);
+	delayLabel.attachToComponent(&delayButton, false);
+	addAndMakeVisible(delayButton);
+	addAndMakeVisible(delayLabel);
+
+	delayMixSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+	delayMixSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, delayMixSlider.getTextBoxHeight()); //Do we need a textbox here?
+	delayMixSlider.setRange(0, 100);            //These values need to be changed
+	delayMixSlider.setValue(50);                 //These values need to be changed
+	delayMixSlider.setTextValueSuffix(" %");      //These values need to be changed
+	delayMixSlider.addListener(this);
+	delayMixLabel.setText("Dry/Wet", dontSendNotification);
+	delayMixLabel.attachToComponent(&delayMixSlider, false);
+	addAndMakeVisible(delayMixSlider);
+	addAndMakeVisible(delayMixLabel);
+
+	delayFeedbackSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+	delayFeedbackSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, delayFeedbackSlider.getTextBoxHeight());
+	delayFeedbackSlider.setRange(20, 12000);              //These values need to be changed
+	delayFeedbackSlider.setValue(6000);                   //These values need to be changed
+	delayFeedbackSlider.setTextValueSuffix(" ");        //These values need to be changed
+	delayFeedbackSlider.addListener(this);
+	delayFeedbackLabel.setText("Feedback", dontSendNotification);
+	delayFeedbackLabel.attachToComponent(&delayFeedbackSlider, false);
+	addAndMakeVisible(delayFeedbackSlider);
+	addAndMakeVisible(delayFeedbackLabel);
+
+	delayTimeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+	delayTimeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, delayTimeSlider.getTextBoxHeight()); //Do we need a textbox here?
+	delayTimeSlider.setRange(20, 12000);            //These values need to be changed
+	delayTimeSlider.setValue(6000);                 //These values need to be changed
+	delayTimeSlider.setTextValueSuffix("");      //These values need to be changed
+	delayTimeSlider.addListener(this);
+	delayTimeLabel.setText("Delay Time", dontSendNotification);
+	delayTimeLabel.attachToComponent(&delayTimeSlider, false);
+	addAndMakeVisible(delayTimeSlider);
+	addAndMakeVisible(delayTimeLabel);
+
+
+	//**********************************************************************************************************//
+	//******************************Reverb UI*******************************************************************//	
+	reverbButton.setButtonText("off"); // Do we want to start with no reverb?
+	reverbButton.setToggleState(false, NotificationType::dontSendNotification);
+	reverbButton.addListener(this);
+	reverbLabel.setText("Reverb", dontSendNotification);
+	reverbLabel.attachToComponent(&reverbButton, false);
+	addAndMakeVisible(reverbButton);
+	addAndMakeVisible(reverbLabel);
+
+	reverbMixSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+	reverbMixSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, reverbMixSlider.getTextBoxHeight()); //Do we need a textbox here?
+	reverbMixSlider.setRange(20, 12000);            //These values need to be changed
+	reverbMixSlider.setValue(6000);                 //These values need to be changed
+	reverbMixSlider.setTextValueSuffix(" %");      //These values need to be changed
+	reverbMixSlider.addListener(this);
+	reverbMixLabel.setText("Dry/Wet", dontSendNotification);
+	reverbMixLabel.attachToComponent(&reverbMixSlider, false);
+	addAndMakeVisible(reverbMixSlider);
+	addAndMakeVisible(reverbMixLabel);
+
+	reverbLevelSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+	reverbLevelSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, reverbLevelSlider.getTextBoxHeight());
+	reverbLevelSlider.setRange(20, 12000);              //These values need to be changed
+	reverbLevelSlider.setValue(6000);                   //These values need to be changed
+	reverbLevelSlider.setTextValueSuffix(" ");        //These values need to be changed
+	reverbLevelSlider.addListener(this);
+	reverbLevelLabel.setText("Room Size", dontSendNotification);
+	reverbLevelLabel.attachToComponent(&reverbLevelSlider, false);
+	addAndMakeVisible(reverbLevelSlider);
+	addAndMakeVisible(reverbLevelLabel);
+
+	reverbDampingSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+	reverbDampingSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, reverbDampingSlider.getTextBoxHeight()); //Do we need a textbox here?
+	reverbDampingSlider.setRange(20, 12000);            //These values need to be changed
+	reverbDampingSlider.setValue(6000);                 //These values need to be changed
+	reverbDampingSlider.setTextValueSuffix("");      //These values need to be changed
+	reverbDampingSlider.addListener(this);
+	reverbDampingLabel.setText("Damping", dontSendNotification);
+	reverbDampingLabel.attachToComponent(&reverbDampingSlider, false);
+	addAndMakeVisible(reverbDampingSlider);
+	addAndMakeVisible(reverbDampingLabel);
+	//**********************************************************************************************************//
+
+	addAndMakeVisible(visualiser);
+
+	setSize(800, 700);
+
+
+	// specify the number of input and output channels that we want to open
+	setAudioChannels(0, 2);
 }
 
 MainComponent::~MainComponent()
 {
-    // This shuts down the audio device and clears the audio source.
-    keyboardState.removeListener (this);
-    deviceManager.removeMidiInputCallback (MidiInput::getDevices()[midiInputList.getSelectedItemIndex()], this);
-    shutdownAudio();
+	// This shuts down the audio device and clears the audio source.
+	keyboardState.removeListener(this);
+	deviceManager.removeMidiInputCallback(MidiInput::getDevices()[midiInputList.getSelectedItemIndex()], this);
+	shutdownAudio();
 }
 
 //==============================================================================
-void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
+void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
 	dsp::ProcessSpec spec;
 	spec.sampleRate = sampleRate;
 	spec.maximumBlockSize = 512;
 	spec.numChannels = 2;
-    // This function will be called when the audio device is started, or when
-    // its settings (i.e. sample rate, block size, etc) are changed.
+	// This function will be called when the audio device is started, or when
+	// its settings (i.e. sample rate, block size, etc) are changed.
 	wave.initialise([](float x) { return fmod(x, 1); }, 128);
 	//wave.initialise([](float x) { return std::sin(x); }, 128);
 	//wave.initialise([](float x) { return signbit(std::sin(x)); }, 128);
@@ -141,147 +271,192 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 	lp1.prepare(spec);
 	rv6.prepare(spec);
 	lp1.setMode(dsp::LadderFilter<float>::Mode::LPF12);
-	lp1.setCutoffFrequencyHz(5000.0f);            
+	lp1.setCutoffFrequencyHz(5000.0f);
 	lp1.setResonance(0.7f);
 	lvl.prepare(spec);
 
-    // You can use this function to initialise any resources you might need,
-    // but be careful - it will be called on the audio thread, not the GUI thread.
+	// You can use this function to initialise any resources you might need,
+	// but be careful - it will be called on the audio thread, not the GUI thread.
 
-    // For more details, see the help for AudioProcessor::prepareToPlay()
+	// For more details, see the help for AudioProcessor::prepareToPlay()
+	visualiser.clear();
 }
 
-void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
+void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
 {
-	
-    float* leftSpeaker = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);//start of buffer fill
-    float* rightSpeaker = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
+
+	float* leftSpeaker = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);//start of buffer fill
+	float* rightSpeaker = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
 	float* channels[] = { leftSpeaker, rightSpeaker };
-	
-    /*for (int sample = 0; sample < bufferToFill.buffer->getNumSamples(); ++sample){
-        double theWave = wave.SawWave(sample, 440, 0.25); ////input to saw wave function might be a good start to apply MIDI
-		
+
+	/*for (int sample = 0; sample < bufferToFill.buffer->getNumSamples(); ++sample){
+		double theWave = wave.SawWave(sample, 440, 0.25); ////input to saw wave function might be a good start to apply MIDI
+
 		leftSpeaker[sample] = rightSpeaker[sample] = theWave;
-        
-    }*/
-    // Your audio-processing code goes here!
-    
-    
+
+	}*/
+	// Your audio-processing code goes here!
+
+
 	dsp::AudioBlock<float> ab1 = dsp::AudioBlock<float>(channels, 2, bufferToFill.buffer->getNumSamples());
 	dsp::ProcessContextReplacing<float> pc = dsp::ProcessContextReplacing<float>(ab1);
-    // For more details, see the help for AudioProcessor::getNextAudioBlock()
+	// For more details, see the help for AudioProcessor::getNextAudioBlock()
 	wave.process(pc);
 	wave2.process(pc);
 	wave3.process(pc);
 	lp1.process(pc);
 	lvl.process(pc);
-	
+
 	rv6.process(pc);
-	
-    // Right now we are not producing any data, in which case we need to clear the buffer
-    // (to prevent the output of random noise)
-    //bufferToFill.clearActiveBufferRegion(); ///had to comment this out it was killing output
+
+	// Right now we are not producing any data, in which case we need to clear the buffer
+	// (to prevent the output of random noise)
+	//bufferToFill.clearActiveBufferRegion(); ///had to comment this out it was killing output
+	visualiser.pushBuffer(bufferToFill);
 }
 
 void MainComponent::releaseResources()
 {
-    // This will be called when the audio device stops, or when it is being
-    // restarted due to a setting change.
+	// This will be called when the audio device stops, or when it is being
+	// restarted due to a setting change.
 
-    // For more details, see the help for AudioProcessor::releaseResources()
+	// For more details, see the help for AudioProcessor::releaseResources()
 }
 
 //==============================================================================
-void MainComponent::paint (Graphics& g)
+void MainComponent::paint(Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+	// (Our component is opaque, so we must completely fill the background with a solid colour)
+	g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
-    // You can add your drawing code here!
-    
+	// You can add your drawing code here!
+
 }
 
 void MainComponent::resized()
 {
 	//=========================Slider Sizing and positioning============================
 	Rectangle<int> area = getLocalBounds();	//This rectangle is used to scalably map sliders on screen
-	
-	Rectangle<int> keyboadMidiArea = area.removeFromTop(area.getHeight() / 2.5); //Keyboard and midi message box placed at top third of the screen
+
+	Rectangle<int> keyboadMidiArea = area.removeFromTop(area.getHeight() / 5); //Keyboard and midi message box placed at top third of the screen
 	midiInputList.setBounds(keyboadMidiArea.removeFromTop(30).removeFromRight(getWidth() - 150).reduced(8));
 	keyboardComponent.setBounds(keyboadMidiArea.removeFromTop(80).reduced(8));
-	midiMessagesBox.setBounds(keyboadMidiArea.reduced(8));
+
+	visualiser.setBounds(area.removeFromTop(150));
+	area.removeFromTop(40); // This separates the keyboard and the audio visualizer
+
+	Rectangle<int> filterSection = area.removeFromTop(90); //First row will house the filters section
+	area.removeFromTop(40); // This separates the Filter and oscillator section. Purely aesthetic
+	Rectangle<int> oscillatorSection = area.removeFromTop(90);//Second row will house oscillator section
+	area.removeFromTop(40); // This separates the Filter and oscillator section. Purely aesthetic
+	Rectangle<int> reverbAndDelaySection = area.removeFromTop(90); //Third row will house the delay and reverb sections
+	area.removeFromTop(40); // This separates the Filter and oscillator section. Purely aesthetic
+
+	//**************************Filter UI********************************************************//
+	filterSection.removeFromLeft(110); //spacing, aesthetic
+
+	lfoFilterButton.setBounds(filterSection.removeFromLeft(80));
+
+	lfoFrequencySlider.setBounds(filterSection.removeFromLeft(80));
+
+	passFilterButton.setBounds(filterSection.removeFromLeft(80));
+
+	filterSection.removeFromLeft(80); //spacing, aesthetic
+
+	cutoffFrequencySlider.setBounds(filterSection.removeFromLeft(100));
+
+	resonanceSlider.setBounds(filterSection.removeFromLeft(80));
+
+	driveSlider.setBounds(filterSection.removeFromLeft(80));
+	//******************************************************************************************//
+	//**************************Oscillator UI***************************************************//
+	oscillatorSection.removeFromLeft(30); //spacing, aesthetic
+
+	masterVolumeSlider.setBounds(oscillatorSection.removeFromLeft(70));
+
+	oscillatorSection.removeFromLeft(170); //spacing, aesthetic
 	
-	Rectangle<int> sliderDialArea = area.removeFromTop(area.getHeight() - (area.getHeight() / 3)); //dials and sliders will fall right below keyboard and midi message box
-	Rectangle<int> sdRow1 = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 2); //Top row will house the filters section
-	Rectangle<int> sdRow2 = sliderDialArea.removeFromTop(sliderDialArea.getHeight() / 2);//Bottom row will house oscillator and mixer sections
+	oscillator1.setBounds(oscillatorSection.removeFromLeft(80));
 
-	filterButton.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 5));
-	cutoffFrequencySlider.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 4));
-	resonanceSlider.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 3));
-	driveSlider.setBounds(sdRow1.removeFromLeft(sdRow1.getWidth() / 3));
+	oscillator2.setBounds(oscillatorSection.removeFromLeft(80));
 
-    //auto area = getLocalBounds();
-    
+	oscillator3.setBounds(oscillatorSection.removeFromLeft(80));
 
-	//frequencySlider.setBounds(100, 40, getWidth() - 130, 20);
-	//dial1.setBounds(dialArea.removeFromLeft(area.getWidth() / 2)); //Set position to bottom left of screen
-	//dial2.setBounds(dialArea.removeFromRight(area.getWidth() / 2)); //Set position to bottom right of screen
-																	//=================================================================================
+	//******************************************************************************************//
+	//**************************Delay UI********************************************************//
+	reverbAndDelaySection.removeFromLeft(30); //spacing, aesthetic
 
+	delayButton.setBounds(reverbAndDelaySection.removeFromLeft(80));
 
-    // This is called when the MainContentComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
+	delayTimeSlider.setBounds(reverbAndDelaySection.removeFromLeft(80));
+
+	delayMixSlider.setBounds(reverbAndDelaySection.removeFromLeft(80));
+
+	delayFeedbackSlider.setBounds(reverbAndDelaySection.removeFromLeft(80));
+	//******************************************************************************************//
+	//**************************Reverb UI*******************************************************//
+	reverbAndDelaySection.removeFromLeft(80);
+
+	reverbButton.setBounds(reverbAndDelaySection.removeFromLeft(80));
+
+	reverbDampingSlider.setBounds(reverbAndDelaySection.removeFromLeft(80));
+
+	reverbMixSlider.setBounds(reverbAndDelaySection.removeFromLeft(80));
+
+	reverbLevelSlider.setBounds(reverbAndDelaySection.removeFromLeft(80));
+
+	//******************************************************************************************//
+
 }
-void MainComponent::setMidiInput (int index)
+void MainComponent::setMidiInput(int index)
 {
-    auto list = MidiInput::getDevices();
-    
-    deviceManager.removeMidiInputCallback (list[lastInputIndex], this);
-    
-    auto newInput = list[index];
-    
-    if (! deviceManager.isMidiInputEnabled (newInput))
-        deviceManager.setMidiInputEnabled (newInput, true);
-    
-    deviceManager.addMidiInputCallback (newInput, this);
-    midiInputList.setSelectedId (index + 1, dontSendNotification);
-    
-    lastInputIndex = index;
+	auto list = MidiInput::getDevices();
+
+	deviceManager.removeMidiInputCallback(list[lastInputIndex], this);
+
+	auto newInput = list[index];
+
+	if (!deviceManager.isMidiInputEnabled(newInput))
+		deviceManager.setMidiInputEnabled(newInput, true);
+
+	deviceManager.addMidiInputCallback(newInput, this);
+	midiInputList.setSelectedId(index + 1, dontSendNotification);
+
+	lastInputIndex = index;
 }
 
-void MainComponent::handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message)
+void MainComponent::handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message)
 {
-    const ScopedValueSetter<bool> scopedInputFlag (isAddingFromMidiInput, true);
-    keyboardState.processNextMidiEvent (message);
-    postMessageToList (message, source->getName());
+	const ScopedValueSetter<bool> scopedInputFlag(isAddingFromMidiInput, true);
+	keyboardState.processNextMidiEvent(message);
+	postMessageToList(message, source->getName());
 }
 
-void MainComponent::handleNoteOn (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
+void MainComponent::handleNoteOn(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
 {
-    if (! isAddingFromMidiInput)
-    {
-        auto m = MidiMessage::noteOn (midiChannel, midiNoteNumber, velocity);
-        m.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
-        postMessageToList (m, "On-Screen Keyboard");
+	if (!isAddingFromMidiInput)
+	{
+		auto m = MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
+		m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
+		postMessageToList(m, "On-Screen Keyboard");
 		wave.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 432));
 		wave2.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 432));
 		wave3.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 432));
 
 		lvl.setGainLinear(velocity);
-		
-    }
+
+	}
 }
 
-void MainComponent::handleNoteOff (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
+void MainComponent::handleNoteOff(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
 {
-    if (! isAddingFromMidiInput)
-    {
-        auto m = MidiMessage::noteOff (midiChannel, midiNoteNumber);
-        m.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
-        postMessageToList (m, "On-Screen Keyboard");
-		
-		
+	if (!isAddingFromMidiInput)
+	{
+		auto m = MidiMessage::noteOff(midiChannel, midiNoteNumber);
+		m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
+		postMessageToList(m, "On-Screen Keyboard");
+
+
 		//lvl.setGainLinear(0);
-    }
+	}
 }
