@@ -323,9 +323,11 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
 	dsp::AudioBlock<float> ab1 = dsp::AudioBlock<float>(channels, 2, bufferToFill.buffer->getNumSamples());
 	dsp::ProcessContextReplacing<float> pc = dsp::ProcessContextReplacing<float>(ab1);
     // For more details, see the help for AudioProcessor::getNextAudioBlock()
-	wave.process(pc);
-	wave2.process(pc);
-	wave3.process(pc);
+    if(currentNotes.size() > 0) {
+    // 	wave.process(pc);
+        wave2.process(pc);
+    // 	wave3.process(pc);
+    }
 	lp1.process(pc);
 	lvl.process(pc);
 	
@@ -437,6 +439,7 @@ void MainComponent::handleIncomingMidiMessage (MidiInput* source, const MidiMess
 
 void MainComponent::handleNoteOn (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
 {
+    currentNotes.insert(midiNoteNumber);
     if (! isAddingFromMidiInput)
     {
         auto m = MidiMessage::noteOn (midiChannel, midiNoteNumber, velocity);
@@ -453,12 +456,16 @@ void MainComponent::handleNoteOn (MidiKeyboardState*, int midiChannel, int midiN
 
 void MainComponent::handleNoteOff (MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
 {
+    currentNotes.erase(midiNoteNumber);
     if (! isAddingFromMidiInput)
     {
         auto m = MidiMessage::noteOff (midiChannel, midiNoteNumber);
         m.setTimeStamp (Time::getMillisecondCounterHiRes() * 0.001);
         postMessageToList (m, "On-Screen Keyboard");
 		
+        wave.reset();
+        wave2.reset();
+        wave3.reset();
 		
 		//lvl.setGainLinear(0);
     }

@@ -16,6 +16,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h" //////this is where juce includes all of its headersfor its modules. the descriptions are in online documentation to use you can initialize down below in private part of main component class like how i did for this one (dsp::Oscillator<float> wave2;) test it out explore other classes for anything useful.
 #include "waveForms.h"
+#include <set>
 
 //==============================================================================
 /*
@@ -326,7 +327,7 @@ private:
 
 
     
-
+    std::set<int> currentNotes;
     
 	
     //i had to manually add this dsp module from the modules section to the left on the projucer here is documentation https://docs.juce.com/master/juce__Oscillator_8h.html
