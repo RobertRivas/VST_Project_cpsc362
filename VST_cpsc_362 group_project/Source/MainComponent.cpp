@@ -437,8 +437,8 @@ void MainComponent::handleIncomingMidiMessage(MidiInput* source, const MidiMessa
 void MainComponent::handleNoteOn(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
 {
     currentNotes.insert(midiNoteNumber);
-	if (!isAddingFromMidiInput)
-	{
+	
+	
 		auto m = MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
 		m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
 		postMessageToList(m, "On-Screen Keyboard");
@@ -448,14 +448,14 @@ void MainComponent::handleNoteOn(MidiKeyboardState*, int midiChannel, int midiNo
 
 		lvl.setGainLinear(velocity);
 
-	}
+	
 }
 
 void MainComponent::handleNoteOff(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
 {
     currentNotes.erase(midiNoteNumber);
-	if (!isAddingFromMidiInput)
-	{
+	
+	
 		auto m = MidiMessage::noteOff(midiChannel, midiNoteNumber);
 		m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
 		postMessageToList(m, "On-Screen Keyboard");
@@ -464,5 +464,5 @@ void MainComponent::handleNoteOff(MidiKeyboardState*, int midiChannel, int midiN
         wave2.reset();
         wave3.reset();
 		//lvl.setGainLinear(0);
-	}
+	
 }
