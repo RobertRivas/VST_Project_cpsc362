@@ -67,7 +67,8 @@ public:
 			lp1.setDrive(drv);
 		}
 		else if (slider == &lfoFrequencySlider) {
-
+			lfo.setFrequency(slider->getValue());
+			
 		}
 		else if (slider == &delayMixSlider) {
 
@@ -79,13 +80,20 @@ public:
 
 		}
 		else if (slider == &reverbMixSlider) {
-
+			rvp = rv6.getParameters();
+			rvp.wetLevel = slider->getValue();
+			rvp.dryLevel = 1 - slider->getValue();
+			rv6.setParameters(rvp);
 		}
 		else if (slider == &reverbLevelSlider) {
-
+			rvp = rv6.getParameters();
+			rvp.roomSize = slider->getValue();
+			rv6.setParameters(rvp);
 		}
 		else if (slider == &reverbDampingSlider) {
-
+			rvp = rv6.getParameters();
+			rvp.damping = slider->getValue();
+			rv6.setParameters(rvp);
 		}
 	}
 	void buttonClicked(Button * button) override {
@@ -94,11 +102,13 @@ public:
 			{
 				passFilterButton.setButtonText("high pass");
 				passFilterState = true;
+				lp1.setMode(dsp::LadderFilter<float>::Mode::HPF24);
 			}
 			else
 			{
 				passFilterButton.setButtonText("low pass");
 				passFilterState = false;
+				lp1.setMode(dsp::LadderFilter<float>::Mode::LPF24);
 			}
 		}
 		else if (button == &lfoFilterButton) {
@@ -117,14 +127,18 @@ public:
 			case 1:
 				oscillator1.setButtonText("square");
 				osc1WaveType = 2;
+				wave.initialise([](float x) { return signbit(std::sin(x)); }, 128);
+				
 				break;
 			case 2:
 				oscillator1.setButtonText("sawtooth");
 				osc1WaveType = 3;
+				wave.initialise([](float x) { return fmod(x, 1); }, 128);
 				break;
 			case 3:
 				oscillator1.setButtonText("sine");
 				osc1WaveType = 1;
+				wave.initialise([](float x) { return std::sin(x); }, 128);
 				break;
 			}
 		}
@@ -274,16 +288,22 @@ private:
 		midiMessagesBox.moveCaretToEnd();
 		midiMessagesBox.insertTextAtCaret(m + newLine);
 	}
-
-
+	enum {
+		oscIndex,
+		gainIndex,
+		reverbIndex,
+		filterIndex
+	};
+	dsp::ProcessorChain<dsp::Oscillator<float>, dsp::Gain<float>, dsp::Reverb, dsp::LadderFilter<float>> chain;
 	dsp::Oscillator<float> wave;
 	dsp::Oscillator<float> wave2; //created this instance to get the ball rolling on calling juce classes from documentation
-	dsp::Oscillator<float> wave3;
+	dsp::Oscillator<float> lfo;
 	dsp::LadderFilter<float> lp1;
 	dsp::Reverb rv6;
 	dsp::Gain<float> lvl;
 	std::vector<MidiMessage> notes;
-
+	int lfoCounter = 100;
+	Reverb::Parameters rvp;
 	//midi classes
 
 

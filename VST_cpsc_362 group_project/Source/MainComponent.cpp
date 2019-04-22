@@ -55,8 +55,8 @@ startTime(Time::getMillisecondCounterHiRes() * 0.001)
 
 	driveSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	driveSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, driveSlider.getTextBoxHeight());
-	driveSlider.setRange(1, 100);
-	driveSlider.setValue(50);
+	driveSlider.setRange(1, 10);
+	driveSlider.setValue(1);
 	driveLabel.setText("Drive", dontSendNotification);
 	driveLabel.attachToComponent(&driveSlider, false);
 	driveSlider.addListener(this);
@@ -93,8 +93,8 @@ startTime(Time::getMillisecondCounterHiRes() * 0.001)
 
 	lfoFrequencySlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	lfoFrequencySlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, lfoFrequencySlider.getTextBoxHeight());
-	lfoFrequencySlider.setRange(20, 12000);
-	lfoFrequencySlider.setValue(6000);
+	lfoFrequencySlider.setRange(0, 20);
+	lfoFrequencySlider.setValue(3);
 	lfoFrequencySlider.setTextValueSuffix(" Hz");
 	lfoFrequencySlider.addListener(this);
 	lfoFrequencyLabel.setText("LFO Frequency", dontSendNotification);
@@ -198,8 +198,8 @@ startTime(Time::getMillisecondCounterHiRes() * 0.001)
 
 	reverbMixSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	reverbMixSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, reverbMixSlider.getTextBoxHeight()); //Do we need a textbox here?
-	reverbMixSlider.setRange(20, 12000);            //These values need to be changed
-	reverbMixSlider.setValue(6000);                 //These values need to be changed
+	reverbMixSlider.setRange(0, 1);            //These values need to be changed
+	reverbMixSlider.setValue(0.5);                 //These values need to be changed
 	reverbMixSlider.setTextValueSuffix(" %");      //These values need to be changed
 	reverbMixSlider.addListener(this);
 	reverbMixLabel.setText("Dry/Wet", dontSendNotification);
@@ -209,8 +209,8 @@ startTime(Time::getMillisecondCounterHiRes() * 0.001)
 
 	reverbLevelSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	reverbLevelSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, reverbLevelSlider.getTextBoxHeight());
-	reverbLevelSlider.setRange(20, 12000);              //These values need to be changed
-	reverbLevelSlider.setValue(6000);                   //These values need to be changed
+	reverbLevelSlider.setRange(0, 1);              //These values need to be changed
+	reverbLevelSlider.setValue(0.5);                   //These values need to be changed
 	reverbLevelSlider.setTextValueSuffix(" ");        //These values need to be changed
 	reverbLevelSlider.addListener(this);
 	reverbLevelLabel.setText("Room Size", dontSendNotification);
@@ -220,8 +220,8 @@ startTime(Time::getMillisecondCounterHiRes() * 0.001)
 
 	reverbDampingSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	reverbDampingSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, reverbDampingSlider.getTextBoxHeight()); //Do we need a textbox here?
-	reverbDampingSlider.setRange(20, 12000);            //These values need to be changed
-	reverbDampingSlider.setValue(6000);                 //These values need to be changed
+	reverbDampingSlider.setRange(0, 1);            //These values need to be changed
+	reverbDampingSlider.setValue(0.5);                 //These values need to be changed
 	reverbDampingSlider.setTextValueSuffix("");      //These values need to be changed
 	reverbDampingSlider.addListener(this);
 	reverbDampingLabel.setText("Damping", dontSendNotification);
@@ -256,21 +256,16 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
 	spec.numChannels = 2;
 	// This function will be called when the audio device is started, or when
 	// its settings (i.e. sample rate, block size, etc) are changed.
-	wave.initialise([](float x) { return fmod(x, 1); }, 128);
-	//wave.initialise([](float x) { return std::sin(x); }, 128);
-	//wave.initialise([](float x) { return signbit(std::sin(x)); }, 128);
+	
+	wave.initialise([](float x) { return std::sin(x); }, 128);
+	lfo.initialise([](float x) { return std::sin(x); }, 128);
 	wave.prepare(spec);
-	//wave2.initialise([](float x) { return fmod(x,1); }, 128);
-	//wave2.initialise([](float x) { return std::sin(x); }, 128);
-	wave2.initialise([](float x) { return signbit(std::sin(x)); }, 128);
-	wave2.prepare(spec);
-	//wave3.initialise([](float x) { return fmod(x,1); }, 128);
-	//wave3.initialise([](float x) { return std::sin(x); }, 128);
-	wave3.initialise([](float x) { return signbit(std::sin(x)); }, 128);
-	wave3.prepare(spec);
+	lfo.prepare(spec);
+	
 	lp1.prepare(spec);
 	rv6.prepare(spec);
-	lp1.setMode(dsp::LadderFilter<float>::Mode::LPF12);
+	lfo.setFrequency(5.0);
+	lp1.setMode(dsp::LadderFilter<float>::Mode::LPF24);
 	lp1.setCutoffFrequencyHz(5000.0f);
 	lp1.setResonance(0.7f);
 	lvl.prepare(spec);
@@ -302,15 +297,29 @@ void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill
 	dsp::ProcessContextReplacing<float> pc = dsp::ProcessContextReplacing<float>(ab1);
 	// For more details, see the help for AudioProcessor::getNextAudioBlock()
 	if(currentNotes.size() > 0) {
-    // 	wave.process(pc);
-        wave2.process(pc);
-    // 	wave3.process(pc);
+     	wave.process(pc);
+		if (reverbOn) {
+			rv6.process(pc);
+		}
+     	
     }
+	
+	if (lfoFilterState) {
+		
+		
+		auto lfoOut = lfo.processSample(0.0f);
+		auto cutoffFreqHz = jmap(lfoOut, -1.0f, 1.0f, 1000.0f, (float)cutoffFrequencySlider.getValue());       // [6]
+		lp1.setCutoffFrequencyHz(cutoffFreqHz);
+		lfoCounter = 30;
+		
+	}
 	lp1.process(pc);
+	
+	
+	if (reverbOn) {
+		rv6.process(pc);
+	}
 	lvl.process(pc);
-
-	rv6.process(pc);
-
 	// Right now we are not producing any data, in which case we need to clear the buffer
 	// (to prevent the output of random noise)
 	//bufferToFill.clearActiveBufferRegion(); ///had to comment this out it was killing output
@@ -442,9 +451,8 @@ void MainComponent::handleNoteOn(MidiKeyboardState*, int midiChannel, int midiNo
 		auto m = MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
 		m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
 		postMessageToList(m, "On-Screen Keyboard");
-		wave.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 432));
-		wave2.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 432));
-		wave3.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 432));
+		wave.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 440));
+		
 
 		lvl.setGainLinear(velocity);
 
@@ -462,7 +470,7 @@ void MainComponent::handleNoteOff(MidiKeyboardState*, int midiChannel, int midiN
 
         wave.reset();
         wave2.reset();
-        wave3.reset();
+        
 		//lvl.setGainLinear(0);
 	
 }
