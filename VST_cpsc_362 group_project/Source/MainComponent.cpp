@@ -447,32 +447,29 @@ void MainComponent::handleIncomingMidiMessage(MidiInput* source, const MidiMessa
 
 void MainComponent::handleNoteOn(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
 {
-    currentNotes.insert(midiNoteNumber);
-	
-	
-		auto m = MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
-		m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
-		postMessageToList(m, "On-Screen Keyboard");
-		wave.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 440));
+    	currentNotes.insert(midiNoteNumber);
+	auto m = MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
+	m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
+	postMessageToList(m, "On-Screen Keyboard");
+	wave.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 440));
 		
-
-		lvl.setGainLinear(velocity);
+	lvl.setGainLinear(velocity);
 
 	
 }
 
 void MainComponent::handleNoteOff(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
 {
-    currentNotes.erase(midiNoteNumber);
+   	currentNotes.erase(midiNoteNumber);
 	
-	
-		auto m = MidiMessage::noteOff(midiChannel, midiNoteNumber);
-		m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
-		postMessageToList(m, "On-Screen Keyboard");
+	auto m = MidiMessage::noteOff(midiChannel, midiNoteNumber);
+	m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
+	postMessageToList(m, "On-Screen Keyboard");
 
-        wave.reset();
-        wave2.reset();
-        
-		//lvl.setGainLinear(0);
+	if (currentNotes.size() > 0) {
+		std::set<int>::iterator highestNote = currentNotes.end();
+		--highestNote;
+		wave.setFrequency(m.getMidiNoteInHertz(*highestNote, 440));
+	}
 	
 }
