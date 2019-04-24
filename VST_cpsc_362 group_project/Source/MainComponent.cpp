@@ -261,9 +261,13 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
 	lfo.initialise([](float x) { return std::sin(x); }, 128);
 	wave.prepare(spec);
 	lfo.prepare(spec);
-	
+	rvwet = 0.5;
+	rvdry = 0.5;
+	rvp.wetLevel = 0;
+	rvp.dryLevel = 1;
 	lp1.prepare(spec);
 	rv6.prepare(spec);
+	rv6.setParameters(rvp);
 	lfo.setFrequency(5.0);
 	lp1.setMode(dsp::LadderFilter<float>::Mode::LPF24);
 	lp1.setCutoffFrequencyHz(5000.0f);
@@ -298,9 +302,7 @@ void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill
 	// For more details, see the help for AudioProcessor::getNextAudioBlock()
 	if(currentNotes.size() > 0) {
      	wave.process(pc);
-		if (reverbOn) {
-			rv6.process(pc);
-		}
+		
      	
     }
 	
@@ -316,9 +318,9 @@ void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill
 	lp1.process(pc);
 	
 	
-	if (reverbOn) {
-		rv6.process(pc);
-	}
+	
+	rv6.process(pc);
+	
 	lvl.process(pc);
 	// Right now we are not producing any data, in which case we need to clear the buffer
 	// (to prevent the output of random noise)

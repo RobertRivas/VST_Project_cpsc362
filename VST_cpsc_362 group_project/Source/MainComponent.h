@@ -81,8 +81,10 @@ public:
 		}
 		else if (slider == &reverbMixSlider) {
 			rvp = rv6.getParameters();
+			rvwet = slider->getValue();
+			rvdry = 1- slider->getValue();
 			rvp.wetLevel = slider->getValue();
-			rvp.dryLevel = 1 - slider->getValue();
+
 			rv6.setParameters(rvp);
 		}
 		else if (slider == &reverbLevelSlider) {
@@ -190,11 +192,18 @@ public:
 			if (!reverbOn) {
 				reverbButton.setButtonText("on");
 				reverbOn = true;
+				
+				rvp.dryLevel = rvdry;
+				rvp.wetLevel = rvwet;
+				rv6.setParameters(rvp);
 				//add code here?
 			}
 			else {
 				reverbButton.setButtonText("off");
 				reverbOn = false;
+				rvp.dryLevel = 1;
+				rvp.wetLevel = 0;
+				rv6.setParameters(rvp);
 				//add code here?
 			}
 		}
@@ -304,6 +313,7 @@ private:
 	std::vector<MidiMessage> notes;
 	int lfoCounter = 100;
 	Reverb::Parameters rvp;
+	float rvwet, rvdry;
 	//midi classes
 
 
