@@ -154,8 +154,8 @@ startTime(Time::getMillisecondCounterHiRes() * 0.001)
 
 	delayMixSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	delayMixSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, delayMixSlider.getTextBoxHeight()); //Do we need a textbox here?
-	delayMixSlider.setRange(0, 100);            //These values need to be changed
-	delayMixSlider.setValue(50);                 //These values need to be changed
+	delayMixSlider.setRange(0, 1);            //These values need to be changed
+	delayMixSlider.setValue(0.5);                 //These values need to be changed
 	delayMixSlider.setTextValueSuffix(" %");      //These values need to be changed
 	delayMixSlider.addListener(this);
 	delayMixLabel.setText("Dry/Wet", dontSendNotification);
@@ -165,8 +165,8 @@ startTime(Time::getMillisecondCounterHiRes() * 0.001)
 
 	delayFeedbackSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	delayFeedbackSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, delayFeedbackSlider.getTextBoxHeight());
-	delayFeedbackSlider.setRange(20, 12000);              //These values need to be changed
-	delayFeedbackSlider.setValue(6000);                   //These values need to be changed
+	delayFeedbackSlider.setRange(0, 1);              //These values need to be changed
+	delayFeedbackSlider.setValue(0.5);                   //These values need to be changed
 	delayFeedbackSlider.setTextValueSuffix(" ");        //These values need to be changed
 	delayFeedbackSlider.addListener(this);
 	delayFeedbackLabel.setText("Feedback", dontSendNotification);
@@ -176,8 +176,8 @@ startTime(Time::getMillisecondCounterHiRes() * 0.001)
 
 	delayTimeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	delayTimeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, delayTimeSlider.getTextBoxHeight()); //Do we need a textbox here?
-	delayTimeSlider.setRange(20, 12000);            //These values need to be changed
-	delayTimeSlider.setValue(6000);                 //These values need to be changed
+	delayTimeSlider.setRange(0, 2);            //These values need to be changed
+	delayTimeSlider.setValue(0.75);                 //These values need to be changed
 	delayTimeSlider.setTextValueSuffix("");      //These values need to be changed
 	delayTimeSlider.addListener(this);
 	delayTimeLabel.setText("Delay Time", dontSendNotification);
@@ -263,6 +263,7 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
 	lfo.prepare(spec);
 	rvwet = 0.5;
 	rvdry = 0.5;
+	dlwet = 0.5;
 	rvp.wetLevel = 0;
 	rvp.dryLevel = 1;
 	lp1.prepare(spec);
@@ -273,7 +274,8 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
 	lp1.setCutoffFrequencyHz(5000.0f);
 	lp1.setResonance(0.7f);
 	lvl.prepare(spec);
-
+	dd3.prepare(spec);
+	dd3.setWetLevel(0);
 	// You can use this function to initialise any resources you might need,
 	// but be careful - it will be called on the audio thread, not the GUI thread.
 
@@ -317,6 +319,8 @@ void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill
 	}
 	lp1.process(pc);
 	
+	
+	dd3.process(pc);
 	
 	
 	rv6.process(pc);

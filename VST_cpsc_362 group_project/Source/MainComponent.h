@@ -15,7 +15,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h" //////this is where juce includes all of its headersfor its modules. the descriptions are in online documentation to use you can initialize down below in private part of main component class like how i did for this one (dsp::Oscillator<float> wave2;) test it out explore other classes for anything useful.
-#include "waveForms.h"
+#include "Delay.h"
 #include <set>
 
 //==============================================================================
@@ -71,13 +71,17 @@ public:
 			
 		}
 		else if (slider == &delayMixSlider) {
-
+			if (delayOn) {
+				dd3.setWetLevel(slider->getValue());
+			}
 		}
 		else if (slider == &delayFeedbackSlider) {
-
+			dd3.setFeedback(slider->getValue());
 		}
 		else if (slider == &delayTimeSlider) {
-
+			float temp = slider->getValue()*0.75;
+			dd3.setDelayTime(0, slider->getValue());
+			dd3.setDelayTime(1, temp);
 		}
 		else if (slider == &reverbMixSlider) {
 			rvp = rv6.getParameters();
@@ -180,11 +184,14 @@ public:
 			if (!delayOn) {
 				delayButton.setButtonText("on");
 				delayOn = true;
+				dd3.setWetLevel(dlwet);
 				//add code here?
 			}
 			else {
 				delayButton.setButtonText("off");
 				delayOn = false;
+				dlwet = dd3.getWetLevel();
+				dd3.setWetLevel(0);
 				//add code here?
 			}
 		}
@@ -310,6 +317,8 @@ private:
 	dsp::LadderFilter<float> lp1;
 	dsp::Reverb rv6;
 	dsp::Gain<float> lvl;
+	Delay<float> dd3;
+	float dlwet;
 	std::vector<MidiMessage> notes;
 	int lfoCounter = 100;
 	Reverb::Parameters rvp;
