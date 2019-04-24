@@ -126,21 +126,6 @@ startTime(Time::getMillisecondCounterHiRes() * 0.001)
 	addAndMakeVisible(oscillator1);
 	addAndMakeVisible(osc1Label);
 
-	oscillator2.setButtonText("sine");
-	oscillator2.setToggleState(false, NotificationType::dontSendNotification);
-	oscillator2.addListener(this);
-	osc2Label.setText("Oscillator 2", dontSendNotification);
-	osc2Label.attachToComponent(&oscillator2, false);
-	addAndMakeVisible(oscillator2);
-	addAndMakeVisible(osc2Label);
-
-	oscillator3.setButtonText("sine");
-	oscillator3.setToggleState(false, NotificationType::dontSendNotification);
-	oscillator3.addListener(this);
-	osc3Label.setText("Oscillator 3", dontSendNotification);
-	osc3Label.attachToComponent(&oscillator3, false);
-	addAndMakeVisible(oscillator3);
-	addAndMakeVisible(osc3Label);
 
 	//**********************************************************************************************************//
 	//*******************************Delay UI*******************************************************************//
@@ -176,7 +161,7 @@ startTime(Time::getMillisecondCounterHiRes() * 0.001)
 
 	delayTimeSlider.setSliderStyle(Slider::SliderStyle::Rotary);
 	delayTimeSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 120, delayTimeSlider.getTextBoxHeight()); //Do we need a textbox here?
-	delayTimeSlider.setRange(0, 2);            //These values need to be changed
+	delayTimeSlider.setRange(0, 1.9);            //These values need to be changed
 	delayTimeSlider.setValue(0.75);                 //These values need to be changed
 	delayTimeSlider.setTextValueSuffix("");      //These values need to be changed
 	delayTimeSlider.addListener(this);
@@ -319,13 +304,15 @@ void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill
 	}
 	lp1.process(pc);
 	
-	
+
+	lvl.process(pc);
+
 	dd3.process(pc);
 	
 	
 	rv6.process(pc);
 	
-	lvl.process(pc);
+	
 	// Right now we are not producing any data, in which case we need to clear the buffer
 	// (to prevent the output of random noise)
 	//bufferToFill.clearActiveBufferRegion(); ///had to comment this out it was killing output
@@ -387,17 +374,13 @@ void MainComponent::resized()
 	driveSlider.setBounds(filterSection.removeFromLeft(80));
 	//******************************************************************************************//
 	//**************************Oscillator UI***************************************************//
-	oscillatorSection.removeFromLeft(30); //spacing, aesthetic
+	oscillatorSection.removeFromLeft(190); //spacing, aesthetic
 
 	masterVolumeSlider.setBounds(oscillatorSection.removeFromLeft(70));
 
 	oscillatorSection.removeFromLeft(170); //spacing, aesthetic
 	
 	oscillator1.setBounds(oscillatorSection.removeFromLeft(80));
-
-	oscillator2.setBounds(oscillatorSection.removeFromLeft(80));
-
-	oscillator3.setBounds(oscillatorSection.removeFromLeft(80));
 
 	//******************************************************************************************//
 	//**************************Delay UI********************************************************//
@@ -451,32 +434,29 @@ void MainComponent::handleIncomingMidiMessage(MidiInput* source, const MidiMessa
 
 void MainComponent::handleNoteOn(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity)
 {
-    currentNotes.insert(midiNoteNumber);
-	
-	
-		auto m = MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
-		m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
-		postMessageToList(m, "On-Screen Keyboard");
-		wave.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 440));
-		
+	currentNotes.insert(midiNoteNumber);
+	auto m = MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
+	m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
+	postMessageToList(m, "On-Screen Keyboard");
+	wave.setFrequency(m.getMidiNoteInHertz(midiNoteNumber, 440));
 
-		lvl.setGainLinear(velocity);
+	lvl.setGainLinear(velocity*volumeMult);
 
-	
+
 }
 
 void MainComponent::handleNoteOff(MidiKeyboardState*, int midiChannel, int midiNoteNumber, float /*velocity*/)
 {
-    currentNotes.erase(midiNoteNumber);
-	
-	
-		auto m = MidiMessage::noteOff(midiChannel, midiNoteNumber);
-		m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
-		postMessageToList(m, "On-Screen Keyboard");
+	currentNotes.erase(midiNoteNumber);
 
-        wave.reset();
-        wave2.reset();
-        
-		//lvl.setGainLinear(0);
-	
+	auto m = MidiMessage::noteOff(midiChannel, midiNoteNumber);
+	m.setTimeStamp(Time::getMillisecondCounterHiRes() * 0.001);
+	postMessageToList(m, "On-Screen Keyboard");
+
+	if (currentNotes.size() > 0) {
+		std::set<int>::iterator highestNote = currentNotes.end();
+		--highestNote;
+		wave.setFrequency(m.getMidiNoteInHertz(*highestNote, 440));
+	}
+
 }

@@ -55,6 +55,8 @@ public:
 		}
 		else if (slider == &masterVolumeSlider) {
 			//add behavior
+			
+			volumeMult = masterVolumeSlider.getValue() / 100;
 		}
 		else if (slider == &resonanceSlider) {
 			double res = slider->getValue();
@@ -84,10 +86,12 @@ public:
 			dd3.setDelayTime(1, temp);
 		}
 		else if (slider == &reverbMixSlider) {
-			rvp = rv6.getParameters();
-			rvwet = slider->getValue();
-			rvdry = 1- slider->getValue();
-			rvp.wetLevel = slider->getValue();
+			if (reverbOn) {
+				rvp = rv6.getParameters();
+				rvwet = slider->getValue();
+				rvdry = 1 - slider->getValue();
+				rvp.wetLevel = slider->getValue();
+			}
 
 			rv6.setParameters(rvp);
 		}
@@ -145,38 +149,6 @@ public:
 				oscillator1.setButtonText("sine");
 				osc1WaveType = 1;
 				wave.initialise([](float x) { return std::sin(x); }, 128);
-				break;
-			}
-		}
-		else if (button == &oscillator2) {
-			switch (osc2WaveType) {
-			case 1:
-				oscillator2.setButtonText("square");
-				osc2WaveType = 2;
-				break;
-			case 2:
-				oscillator2.setButtonText("sawtooth");
-				osc2WaveType = 3;
-				break;
-			case 3:
-				oscillator2.setButtonText("sine");
-				osc2WaveType = 1;
-				break;
-			}
-		}
-		else if (button == &oscillator3) {
-			switch (osc3WaveType) {
-			case 1:
-				oscillator3.setButtonText("square");
-				osc3WaveType = 2;
-				break;
-			case 2:
-				oscillator3.setButtonText("sawtooth");
-				osc3WaveType = 3;
-				break;
-			case 3:
-				oscillator3.setButtonText("sine");
-				osc3WaveType = 1;
 				break;
 			}
 		}
@@ -319,6 +291,7 @@ private:
 	dsp::Gain<float> lvl;
 	Delay<float> dd3;
 	float dlwet;
+	float volumeMult;
 	std::vector<MidiMessage> notes;
 	int lfoCounter = 100;
 	Reverb::Parameters rvp;
@@ -390,17 +363,6 @@ private:
 									2 = Square
 									3 = Saw 
 								*/
-	TextButton oscillator2;         
-	Label osc2Label;            
-
-
-	int osc2WaveType = 1;
-
-	TextButton oscillator3;
-	Label osc3Label;
-
-
-	int osc3WaveType = 1;
 
 	//******************************************************************************************//
 	//**************************Delay UI********************************************************//
