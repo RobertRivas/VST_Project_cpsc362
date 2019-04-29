@@ -143,7 +143,7 @@ startTime(Time::getMillisecondCounterHiRes() * 0.001)
 	delayMixSlider.setValue(0.5);                 //These values need to be changed
 	delayMixSlider.setTextValueSuffix(" %");      //These values need to be changed
 	delayMixSlider.addListener(this);
-	delayMixLabel.setText("Dry/Wet", dontSendNotification);
+	delayMixLabel.setText("Delay Level", dontSendNotification);
 	delayMixLabel.attachToComponent(&delayMixSlider, false);
 	addAndMakeVisible(delayMixSlider);
 	addAndMakeVisible(delayMixLabel);

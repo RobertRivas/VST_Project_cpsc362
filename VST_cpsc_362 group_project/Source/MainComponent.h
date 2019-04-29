@@ -81,7 +81,7 @@ public:
 			dd3.setFeedback(slider->getValue());
 		}
 		else if (slider == &delayTimeSlider) {
-			float temp = slider->getValue()*0.75;
+			float temp = slider->getValue()*0.618;
 			dd3.setDelayTime(0, slider->getValue());
 			dd3.setDelayTime(1, temp);
 		}
