@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="yyn2gk" name="VST_cpsc_362 group_project" projectType="guiapp"
-              jucerVersion="5.4.2">
+              jucerVersion="5.4.3">
   <MAINGROUP id="o15xPc" name="VST_cpsc_362 group_project">
     <GROUP id="{E398EB47-5C4B-18BA-C44B-324F0171F946}" name="Source">
       <FILE id="HuvI31" name="waveForms.h" compile="1" resource="0" file="Source/waveForms.h"/>
@@ -222,7 +222,7 @@
   <LIVE_SETTINGS>
     <OSX buildEnabled="1"/>
     <LINUX/>
-    <WINDOWS/>
+    <WINDOWS buildEnabled="1"/>
   </LIVE_SETTINGS>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_WEB_BROWSER="0"/>
 </JUCERPROJECT>
